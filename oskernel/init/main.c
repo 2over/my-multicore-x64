@@ -1,7 +1,13 @@
+
+#include "../include/linux/tty.h"
+#include "../include/linux/kernel.h"
+
+
 void kernel_main(void) {
-    int a = 0;
+    console_init();
+    char* s = "cover";
 
-    char* video = (char*)0xb8000;
-
-    *video = 'G';
+    for (int i = 0; i < 2048; ++i) {
+        printk("name : %s, age: %d\n", s, i);
+    }
 }
