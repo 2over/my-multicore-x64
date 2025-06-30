@@ -1,0 +1,4 @@
+; setup相关
+SETUP_ADDR_BASE     equ     0x500
+SETUP_SECTOR_START  equ     1
+SETUP_SECTOR_COUNT  equ     2

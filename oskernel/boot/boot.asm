@@ -6,8 +6,7 @@
 
 [ORG 0x7c00]
 
-[SECTION .data]
-BOOT_MAIN_ADDR equ 0x500
+%include "oskernel/include/global.inc.cover"
 
 [SECTION .text]
 [BITS 16]
@@ -20,10 +19,10 @@ _start:
 
     ; 通过BIOS中断读硬盘，将setup读入内存
     push dword 0                        ; 向栈中压入4B, 起始扇区的高4B
-    push dword 1                        ; 向栈中压入4B, 起始扇区的低4B
-    push word BOOT_MAIN_ADDR >> 4       ; 读入内存的位置(逻辑地址)(为什么右移4位？ 0x13终端历程要求)
+    push dword SETUP_SECTOR_START       ; 向栈中压入4B, 起始扇区的低4B
+    push word SETUP_ADDR_BASE >> 4      ; 读入内存的位置(逻辑地址)(为什么右移4位？ 0x13终端历程要求)
     push word 0                         ; 读入内存的位置(段内偏移)
-    push word 2                         ; 读多少扇区
+    push word SETUP_SECTOR_COUNT        ; 读多少扇区
     push word 0x10                      ; 读硬盘的BIOS例程需要传入的地址结构的大小
     mov si, sp
     mov ah, 0x42                        ; 功能号(0x42表示读硬盘)
@@ -41,7 +40,7 @@ _start:
 
     xchg bx, bx
 
-    jmp     BOOT_MAIN_ADDR
+    jmp     SETUP_ADDR_BASE
 
 
 .read_hd_fail:
