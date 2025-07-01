@@ -110,13 +110,20 @@ protected_mode:
     mov gs, ax
 
     ; 0x9fbff 是1M以下的最大可用区域的地址
-    mov esp, 0x9fbff
+;    mov esp, 0x9fbff
+    mov esp, 0x7b00
 
     xchg bx, bx
     ; 将内核读入内存
     mov edi, KERNEL_ADDR
     mov ecx, 3
-    mov bl, 60
+    mov bl, 30
+    call read_hd
+
+    ; 将64位内核读入内存
+    mov edi, 0x100000
+    mov ecx, 41
+    mov bl, 20
     call read_hd
 
     ; 长跳

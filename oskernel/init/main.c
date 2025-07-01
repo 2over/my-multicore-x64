@@ -56,6 +56,8 @@ static void enter_x64() {
     BOCHS_DEBUG_MAGIC
 
     install_x64_descriptor();
+
+    asm volatile("xchg bx, bx; push 0x0018; push 0x100000; retf");
 }
 
 void kernel_main(void) {

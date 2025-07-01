@@ -14,12 +14,17 @@ DEBUG:= -g
 
 HD_IMG_NAME:= "hd.img"
 
-all: ${BUILD}/boot/boot.o ${BUILD}/boot/setup.o ${BUILD}/system.bin
+all: ${BUILD}/boot/boot.o ${BUILD}/boot/setup.o ${BUILD}/system.bin ${BUILD}/x64/x64.o
 	$(shell rm -rf $(BUILD)/$(HD_IMG_NAME))
 	bximage -q -hd=16 -func=create -sectsize=512 -imgmode=flat $(BUILD)/$(HD_IMG_NAME)
 	dd if=${BUILD}/boot/boot.o of=$(BUILD)/$(HD_IMG_NAME) bs=512 seek=0 count=1 conv=notrunc
 	dd if=${BUILD}/boot/setup.o of=$(BUILD)/$(HD_IMG_NAME) bs=512 seek=1 count=2 conv=notrunc
 	dd if=${BUILD}/system.bin of=$(BUILD)/$(HD_IMG_NAME) bs=512 seek=3 count=30 conv=notrunc
+	dd if=${BUILD}/x64/x64.o of=$(BUILD)/$(HD_IMG_NAME) bs=512 seek=41 count=60 conv=notrunc
+
+${BUILD}/x64/x64.o: oskernel/init/x64.asm
+	$(shell mkdir -p ${BUILD}/x64)
+	nasm -g $< -o $@
 
 ${BUILD}/system.bin: ${BUILD}/kernel.bin
 	objcopy -O binary ${BUILD}/kernel.bin ${BUILD}/system.bin
