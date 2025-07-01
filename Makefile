@@ -26,8 +26,12 @@ ${BUILD}/system.bin: ${BUILD}/kernel.bin
 	nm ${BUILD}/kernel.bin | sort > ${BUILD}/system.map
 
 ${BUILD}/kernel.bin: ${BUILD}/boot/head.o ${BUILD}/init/main.o ${BUILD}/kernel/asm/io.o ${BUILD}/kernel/chr_drv/console.o \
-    ${BUILD}/lib/string.o ${BUILD}/kernel/vsprintf.o ${BUILD}/kernel/printk.o
+    ${BUILD}/lib/string.o ${BUILD}/kernel/vsprintf.o ${BUILD}/kernel/printk.o ${BUILD}/init/enter_x64.o
 	ld -m elf_i386 $^ -o $@ -Ttext 0x1200
+
+${BUILD}/init/enter_x64.o: oskernel/init/enter_x64.asm
+	$(shell mkdir -p ${BUILD}/init)
+	nasm -f elf32 -g $< -o $@
 
 ${BUILD}/kernel/%.o: oskernel/kernel/%.c
 	$(shell mkdir -p ${BUILD}/kernel)
