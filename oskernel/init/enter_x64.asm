@@ -92,24 +92,24 @@ x64_cpu_check:
     add esp, 4
 
     ; 获取物理地址尺寸/虚拟地址尺寸
-    xchg bx, bx
-    mov eax, 0x80000008
-    cpuid
-
-    mov [vir_addr_size], al
-    mov [max_vir_addr_size], ah
-
-    mov eax, [vir_addr_size]
-    push eax
-    push vir_addr_size_format
-    call printk
-    add esp, 8
-
-    mov eax, [max_vir_addr_size]
-    push eax
-    push max_vir_addr_size_format
-    call printk
-    add esp, 8
+;    xchg bx, bx
+;    mov eax, 0x80000008
+;    cpuid
+;
+;    mov [vir_addr_size], al
+;    mov [max_vir_addr_size], ah
+;
+;    mov eax, [vir_addr_size]
+;    push eax
+;    push vir_addr_size_format
+;    call printk
+;    add esp, 8
+;
+;    mov eax, [max_vir_addr_size]
+;    push eax
+;    push max_vir_addr_size_format
+;    call printk
+;    add esp, 8
 
 .return:
     ret
