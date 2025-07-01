@@ -2,6 +2,7 @@
 #include "../include/linux/tty.h"
 #include "../include/linux/kernel.h"
 #include "../include/string.h"
+#include "../include/linux/gdt.h"
 
 #define FOUR_LEVEL_HEAD_TABLE_ADDR 0x8000
 #define FIRST_PDPT_ADDR 0x9000
@@ -9,7 +10,7 @@
 
 extern void x64_cpu_check();
 
-static void prepare_4level_page_atble() {
+static void prepare_4level_page_table() {
     // 准备4级头表
     int* four_level_head_table_addr = (int*)FOUR_LEVEL_HEAD_TABLE_ADDR;
 
@@ -40,7 +41,7 @@ static void prepare_4level_page_atble() {
 }
 
 static void enter_x64() {
-    prepare_4level_page_atble();
+    prepare_4level_page_table();
 
     // 开启物理地址扩展功能: PAE cr4.pae = 1
     asm volatile("xchg bx, bx; mov eax, cr4; bts eax, 5; mov cr4, eax;");
@@ -53,6 +54,8 @@ static void enter_x64() {
 
     BOCHS_DEBUG_MAGIC
     BOCHS_DEBUG_MAGIC
+
+    install_x64_descriptor();
 }
 
 void kernel_main(void) {

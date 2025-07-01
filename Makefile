@@ -26,7 +26,8 @@ ${BUILD}/system.bin: ${BUILD}/kernel.bin
 	nm ${BUILD}/kernel.bin | sort > ${BUILD}/system.map
 
 ${BUILD}/kernel.bin: ${BUILD}/boot/head.o ${BUILD}/init/main.o ${BUILD}/kernel/asm/io.o ${BUILD}/kernel/chr_drv/console.o \
-    ${BUILD}/lib/string.o ${BUILD}/kernel/vsprintf.o ${BUILD}/kernel/printk.o ${BUILD}/init/enter_x64.o ${BUILD}/kernel/kernel.o
+    ${BUILD}/lib/string.o ${BUILD}/kernel/vsprintf.o ${BUILD}/kernel/printk.o ${BUILD}/init/enter_x64.o ${BUILD}/kernel/kernel.o \
+    ${BUILD}/kernel/gdt.o
 	ld -m elf_i386 $^ -o $@ -Ttext 0x1200
 
 ${BUILD}/init/enter_x64.o: oskernel/init/enter_x64.asm
@@ -69,7 +70,7 @@ bochs: all
 qemug: all
 	qemu-system-x86_64 \
 	-m 32M \
-	-boot d \
+	-boot c \
 	-cpu Haswell -smp cores=1,threads=2 \
 	-hda ./build/hd.img \
 	-s -S
@@ -77,7 +78,7 @@ qemug: all
 qemu: all
 	qemu-system-x86_64 \
 	-m 32M \
-	-boot d \
+	-boot c \
 	-cpu Haswell -smp cores=1,threads=2 \
 	-hda ./build/hd.img
 
