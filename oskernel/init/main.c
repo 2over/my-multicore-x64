@@ -34,6 +34,7 @@ static void prepare_4level_page_table() {
     *pdt_addr = 0 | 0x83;
     *(pdt_addr + 1) = 0;
 
+    // 2M - 4M
     *(pdt_addr + 2) = 0x200000 | 0x83;
     *(pdt_addr + 3) = 0;
 

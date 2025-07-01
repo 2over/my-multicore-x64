@@ -10,11 +10,20 @@ CFLAGS+= -nostdlib		# 不需要标准库
 CFLAGS+= -fno-stack-protector	# 不需要栈保护
 CFLAGS:=$(strip ${CFLAGS})
 
+CFLAGS64 := -m64
+CFLAGS64 += -mcmodel=large
+CFLAGS64 += -fno-builtin	# 不需要 gcc 内置函数
+CFLAGS64 += -nostdinc		# 不需要标准头文件
+CFLAGS64 += -fno-pic		# 不需要位置无关的代码  position independent code
+CFLAGS64 += -fno-pie		# 不需要位置无关的可执行程序 position independent executable
+CFLAGS64 += -nostdlib		# 不需要标准库
+CFLAGS64 += -fno-stack-protector	# 不需要栈保护
+
 DEBUG:= -g
 
 HD_IMG_NAME:= "hd.img"
 
-all: ${BUILD}/boot/boot.o ${BUILD}/boot/setup.o ${BUILD}/system.bin ${BUILD}/x64/x64.o ${BUILD}/kernel64/system.bin
+all: ${BUILD}/boot/boot.o ${BUILD}/boot/setup.o ${BUILD}/system.bin ${BUILD}/kernel64/system.bin
 	$(shell rm -rf $(BUILD)/$(HD_IMG_NAME))
 	bximage -q -hd=16 -func=create -sectsize=512 -imgmode=flat $(BUILD)/$(HD_IMG_NAME)
 	dd if=${BUILD}/boot/boot.o of=$(BUILD)/$(HD_IMG_NAME) bs=512 seek=0 count=1 conv=notrunc
@@ -27,8 +36,27 @@ ${BUILD}/kernel64/system.bin: ${BUILD}/kernel64/kernel.bin
 	objcopy -O binary ${BUILD}/kernel64/kernel.bin ${BUILD}/kernel64/system.bin
 	nm ${BUILD}/kernel64/kernel.bin | sort > ${BUILD}/kernel64/system.map
 
-${BUILD}/kernel64/kernel.bin: ${BUILD}/kernel64/boot/head.o ${BUILD}/kernel64/init/main64.o
+${BUILD}/kernel64/kernel.bin: ${BUILD}/kernel64/boot/head.o ${BUILD}/kernel64/init/main64.o ${BUILD}/kernel64/kernel/io.o \
+	${BUILD}/kernel64/kernel/chr_drv/console.o ${BUILD}/kernel64/lib/string.o ${BUILD}/kernel64/kernel/vsprintf.o \
+	${BUILD}/kernel64/kernel/printk.o
+	$(shell mkdir -p ${BUILD}/kernel64)
 	ld -b elf64-x86-64 -o $@ $^ -Ttext 0x100000
+
+${BUILD}/kernel64/kernel/%.o: x64kernel/kernel/%.c
+	$(shell mkdir -p ${BUILD}/kernel64/kernel)
+	gcc ${DEBUG} ${CFLAGS64} -c $< -o $@
+
+${BUILD}/kernel64/lib/%.o: x64kernel/lib/%.c
+	$(shell mkdir -p ${BUILD}/kernel64/lib)
+	gcc ${DEBUG} ${CFLAGS64} -c $< -o $@
+
+${BUILD}/kernel64/kernel/chr_drv/%.o: x64kernel/kernel/chr_drv/%.c
+	$(shell mkdir -p ${BUILD}/kernel64/kernel/chr_drv)
+	gcc ${DEBUG} ${CFLAGS64} -c $< -o $@
+
+${BUILD}/kernel64/kernel/%.o: x64kernel/kernel/%.asm
+	$(shell mkdir -p ${BUILD}/kernel64/kernel)
+	nasm -f elf64 ${DEBUG} $< -o $@
 
 ${BUILD}/kernel64/boot/%.o: x64kernel/boot/%.asm
 	$(shell mkdir -p ${BUILD}/kernel64/boot)
