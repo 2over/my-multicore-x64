@@ -5,6 +5,10 @@
 ; ===========================================================
 
 [ORG 0x500]
+
+
+%include "/home/ziya/CLionProjects/my-multicore-x64/oskernel/boot/include/common.cover"
+
 [SECTION .data]
 KERNEL_ADDR equ 0x1200
 
@@ -111,7 +115,7 @@ protected_mode:
 
     ; 0x9fbff 是1M以下的最大可用区域的地址
 ;    mov esp, 0x9fbff
-    mov esp, 0x7b00
+    mov esp, REAL_MODE_STACK_BASE
 
     xchg bx, bx
     ; 将内核读入内存
@@ -121,10 +125,28 @@ protected_mode:
     call read_hd
 
     ; 将64位内核读入内存
-    mov edi, 0x100000
-    mov ecx, 41
-    mov bl, 20
-    call read_hd
+.load_x64_kernel
+    xor esi, esi
+.loop_load_x64_kernel:
+    mov eax, 0x20000
+    mul esi
+    lea edi, [X64_KERNEL_ADDR_BASE + eax]   ; 读取硬盘的内容存储在内存的位置 edi = 0x100000 + 0x20000 * esi (0x20000 = 512 * 256)
+
+    mov eax, 256
+    mul esi
+    lea ecx, [eax + X64_KERNEL_SECTOR_START]    ; 从哪个扇区开始读 ecx = 256 x esi + 41
+
+    mov bl, 0xff    ; 每次读少多扇区0-255, 共256个
+
+    push esi        ; 保存esi
+
+    call read_hd    ; 读盘
+
+    pop esi         ; 恢复esi
+
+    inc esi
+    cmp esi, X64_KERNEL_CONTAIN_SECTORS ; 如果x64内核过大，需要读很多扇区，改这里即可(实际覆盖的扇区 = (30 - 1) x 256 +41 = 0x3a5200)
+    jne .loop_load_x64_kernel
 
     ; 长跳
     jmp CODE_SELECTOR:KERNEL_ADDR

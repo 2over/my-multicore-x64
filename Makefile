@@ -14,18 +14,31 @@ DEBUG:= -g
 
 HD_IMG_NAME:= "hd.img"
 
-all: ${BUILD}/boot/boot.o ${BUILD}/boot/setup.o ${BUILD}/system.bin ${BUILD}/x64/x64.o
+all: ${BUILD}/boot/boot.o ${BUILD}/boot/setup.o ${BUILD}/system.bin ${BUILD}/x64/x64.o ${BUILD}/kernel64/system.bin
 	$(shell rm -rf $(BUILD)/$(HD_IMG_NAME))
 	bximage -q -hd=16 -func=create -sectsize=512 -imgmode=flat $(BUILD)/$(HD_IMG_NAME)
 	dd if=${BUILD}/boot/boot.o of=$(BUILD)/$(HD_IMG_NAME) bs=512 seek=0 count=1 conv=notrunc
 	dd if=${BUILD}/boot/setup.o of=$(BUILD)/$(HD_IMG_NAME) bs=512 seek=1 count=2 conv=notrunc
 	dd if=${BUILD}/system.bin of=$(BUILD)/$(HD_IMG_NAME) bs=512 seek=3 count=30 conv=notrunc
-	dd if=${BUILD}/x64/x64.o of=$(BUILD)/$(HD_IMG_NAME) bs=512 seek=41 count=60 conv=notrunc
+	dd if=${BUILD}/kernel64/system.bin of=$(BUILD)/$(HD_IMG_NAME) bs=512 seek=41 count=5000 conv=notrunc
 
-${BUILD}/x64/x64.o: oskernel/init/x64.asm
-	$(shell mkdir -p ${BUILD}/x64)
-	nasm -g $< -o $@
+# 下面是64位内核用的
+${BUILD}/kernel64/system.bin: ${BUILD}/kernel64/kernel.bin
+	objcopy -O binary ${BUILD}/kernel64/kernel.bin ${BUILD}/kernel64/system.bin
+	nm ${BUILD}/kernel64/kernel.bin | sort > ${BUILD}/kernel64/system.map
 
+${BUILD}/kernel64/kernel.bin: ${BUILD}/kernel64/boot/head.o ${BUILD}/kernel64/init/main64.o
+	ld -b elf64-x86-64 -o $@ $^ -Ttext 0x100000
+
+${BUILD}/kernel64/boot/%.o: x64kernel/boot/%.asm
+	$(shell mkdir -p ${BUILD}/kernel64/boot)
+	nasm -f elf64 ${DEBUG} $< -o $@
+
+${BUILD}/kernel64/init/%.o: x64kernel/init/%.c
+	$(shell mkdir -p ${BUILD}/kernel64/init)
+	gcc ${DEBUG} ${CFLAGS64} -c $< -o $@
+
+# 下面是32位内核用的
 ${BUILD}/system.bin: ${BUILD}/kernel.bin
 	objcopy -O binary ${BUILD}/kernel.bin ${BUILD}/system.bin
 	nm ${BUILD}/kernel.bin | sort > ${BUILD}/system.map

@@ -1,0 +1,22 @@
+%ifndef COVER_OS_COMMON_INC
+%define COVER_OS_COMMON_INC
+
+
+; 实模式下栈的起始地址
+REAL_MODE_STACK_BASE equ 0x7c00
+
+; setup程序在硬盘的第几个扇区
+SETUP_SECTOR_START equ 1
+
+; setup程序占几个扇区
+SETUP_CONTAIN_SECTORS equ 2
+
+; setup程序在内存中的位置
+SETUP_ADDR_BASE equ 0x500
+
+; x64内核喜爱那个管
+X64_KERNEL_SECTOR_START equ 41
+X64_KERNEL_CONTAIN_SECTORS equ 100
+X64_KERNEL_ADDR_BASE equ 0x100000
+
+%endif

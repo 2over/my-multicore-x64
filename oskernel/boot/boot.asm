@@ -6,6 +6,9 @@
 
 [ORG 0x7c00]
 
+%include "/home/ziya/CLionProjects/my-multicore-x64/oskernel/boot/include/common.cover"
+
+
 [SECTION .data]
 BOOT_MAIN_ADDR equ 0x500
 
@@ -19,7 +22,7 @@ boot_start:
     int 0x10
 
     ; 将setup读入内存
-    mov edi, BOOT_MAIN_ADDR ; 读到哪里
+    mov edi, SETUP_ADDR_BASE ; 读到哪里
     mov ecx, 1              ; 从哪个扇区开始读
     mov bl, 2               ; 读多少扇区
     call read_hd
@@ -29,7 +32,7 @@ boot_start:
     call    print
 
 
-    jmp     BOOT_MAIN_ADDR
+    jmp     SETUP_ADDR_BASE
 
 read_hd:
     ; 0x1f2 8bit 指定读取或写入的扇区数
