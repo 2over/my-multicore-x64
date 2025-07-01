@@ -1,6 +1,7 @@
 
 #include "../include/tty.h"
 #include "../include/kernel.h"
+#include "../include/mm.h"
 
 
 void kernel64_main(void) {
@@ -9,6 +10,8 @@ void kernel64_main(void) {
 
     printk("hello, x64, %d\n", 1231321);
     printk("hello , %s\n", "cover");
+
+    print_check_memory_info();
 
     while (true) {
         asm volatile("hlt");
