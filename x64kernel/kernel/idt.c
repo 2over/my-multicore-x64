@@ -10,6 +10,9 @@ static idt_item_t idt_table[255] = {0};
 
 static idtr_data_t idtr_data;
 
+// 是在汇编中定义的
+extern int64 interrupt_handler_table[0x1f];
+
 #define PIC_M_CTRL  0x20    // 主片的控制端口
 #define PIC_M_DATA  0x21    // 主片的数据端口
 #define PIC_S_CTRL  0xa0    // 从片的控制端口
@@ -55,10 +58,14 @@ void idt_init() {
     int64 handler = (int64)general_interrupt_handler;
 
     for (int i = 0; i < 255; ++i) {
-        install_idt_item(i, handler, 0x18, 0, 0);
+        if (i < 0x1f) {
+            install_idt_item(i , (int64)interrupt_handler_table[i], 0x18, 0, 0);
+        } else {
+            install_idt_item(i, handler, 0x18, 0, 0);
+        }
+
     }
 
-    install_idt_item(0, (int64)&interrupt_handler_0, 0x18, 0, 0);
     install_idt_item(0x20, &clock_handler_entry, 0x18, 0, 0);
     install_idt_item(0x21, &keymap_handler_entry, 0x18, 0, 0);
 
