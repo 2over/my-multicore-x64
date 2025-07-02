@@ -41,6 +41,11 @@ void clock_interrupt_handler() {
     send_eoi(0x20);
 }
 
+void rtc_interrupt_handler() {
+    printk("rtc !\n");
+
+    send_eoi(0x28);
+}
 void install_idt_item(int index, int64 handler, short selector, char ist, char dpl) {
     idt_item_t* item = &idt_table[index];
 

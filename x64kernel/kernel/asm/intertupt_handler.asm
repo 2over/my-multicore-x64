@@ -5,10 +5,11 @@ extern clock_interrupt_handler
 extern keymap_handler
 extern exception_handler
 extern general_interrupt_handler
+extern rtc_interrupt_handler
 
 global rtc_handler_entry
 rtc_handler_entry:
-    call general_interrupt_handler
+    call rtc_interrupt_handler
     iretq
 
 global clock_handler_entry
