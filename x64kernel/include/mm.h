@@ -1,6 +1,7 @@
 #include "types.h"
 #include "bitmap.h"
 
+#define PAGE_SIZE 4096
 
 typedef struct {
     unsigned int base_addr_low;         // 内存基地址的低32位
@@ -38,3 +39,7 @@ void phy_memory_init();
 // 分配、释放物理内存
 void* get_free_page();
 void free_page(void* p);
+
+// 分配、释放虚拟内存
+void* kmalloc(size_t size);
+void kfree_s(void *obj, int size);

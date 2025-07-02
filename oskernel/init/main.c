@@ -35,8 +35,14 @@ static void prepare_4level_page_table() {
     *(pdt_addr + 1) = 0;
 
     // 2M - 4M
-    *(pdt_addr + 2) = 0x200000 | 0x83;
-    *(pdt_addr + 3) = 0;
+//    *(pdt_addr + 2) = 0x200000 | 0x83;
+//    *(pdt_addr + 3) = 0;
+
+    // 直接映射0 - 64M
+    for (int i = 0; i < 50; i++) {
+        *(pdt_addr + i * 2) = 0x200000 * i | 0x83;
+        *(pdt_addr + i * 2 + 1) = 0;
+    }
 
     asm volatile("xchg bx, bx; mov cr3, ebx"::"b"(four_level_head_table_addr));
 }

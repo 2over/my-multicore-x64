@@ -8,22 +8,15 @@ void kernel64_main(void) {
 
     console_init();
     phy_memory_init();
-    printk("kernel64_main .......\n");
-    printk("hello, x64, %d\n", 1231321);
-    printk("hello , %s\n", "cover");
 
-    print_check_memory_info();
+    // 测试分配虚拟内存
+    void* p = kmalloc(1);
+    printk("0x%p\n", p);
 
-    int* p = get_free_page();
-    printk("%x\n", p);
+    kfree_s(p, 1);
 
-    p = get_free_page();
-    printk("%x\n", p);
-
-    free_page(p);
-
-    p = get_free_page();
-    printk("%x\n", p);
+    p = kmalloc(1);
+    printk("0x%p\n", p);
 
     while (true) {
         asm volatile("hlt");

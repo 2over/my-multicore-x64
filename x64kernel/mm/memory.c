@@ -64,6 +64,8 @@ void* get_free_page() {
     assert(-1 != index);
 
     ret = g_physics_memory_map.addr_base + (index << 12);
+    printk("get_free_page: %x\n", ret);
+
     return (void*)ret;
 }
 
