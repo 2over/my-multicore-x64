@@ -1,6 +1,7 @@
 
 #include "../include/bitmap.h"
 #include "../include/string.h"
+#include "../include/kernel.h"
 
 // 构造位图
 void bitmap_make(bitmap_t *map, char *bits, u32 length, u32 offset) {

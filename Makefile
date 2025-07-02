@@ -38,7 +38,7 @@ ${BUILD}/kernel64/system.bin: ${BUILD}/kernel64/kernel.bin
 
 ${BUILD}/kernel64/kernel.bin: ${BUILD}/kernel64/boot/head.o ${BUILD}/kernel64/init/main64.o ${BUILD}/kernel64/kernel/io.o \
 	${BUILD}/kernel64/kernel/chr_drv/console.o ${BUILD}/kernel64/lib/string.o ${BUILD}/kernel64/kernel/vsprintf.o \
-	${BUILD}/kernel64/kernel/printk.o ${BUILD}/kernel64/mm/memory.o
+	${BUILD}/kernel64/kernel/printk.o ${BUILD}/kernel64/mm/memory.o ${BUILD}/kernel64/kernel/bitmap.o ${BUILD}/kernel64/kernel/assert.o
 	$(shell mkdir -p ${BUILD}/kernel64)
 	ld -b elf64-x86-64 -o $@ $^ -Ttext 0x100000
 
@@ -119,7 +119,7 @@ bochs: all
 
 qemug: all
 	qemu-system-x86_64 \
-	-m 3G \
+	-m 4G \
 	-boot c \
 	-cpu Haswell -smp cores=1,threads=2 \
 	-hda ./build/hd.img \
@@ -127,7 +127,7 @@ qemug: all
 
 qemu: all
 	qemu-system-x86_64 \
-	-m 3G \
+	-m 4G \
 	-boot c \
 	-cpu Haswell -smp cores=1,threads=2 \
 	-hda ./build/hd.img

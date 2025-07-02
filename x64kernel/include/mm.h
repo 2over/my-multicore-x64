@@ -1,4 +1,5 @@
 #include "types.h"
+#include "bitmap.h"
 
 
 typedef struct {
@@ -14,4 +15,26 @@ typedef struct {
     check_memory_item_t*    data;
 }check_memory_info_t;;
 
+typedef struct {
+    uint addr_start;    // 可用内存起始地址 一般是1M
+    uint addr_end;      // 可用内存结束地址
+    uint valid_mem_size;
+    uint pages_total;   // 机器物理内存共多少page
+    uint pages_free;    // 机器物理内存还剩多少page
+    uint pages_used;    // 机器物理内存用了多少page
+} physics_memory_info_t;
+
+typedef struct {
+    uint        addr_base;      // 可用物理内存开始位置 3M
+    uint        pages_total;    // 共有多少page
+    bitmap_t    bitmap;
+    uchar*      bitmap_buf;
+}physics_memory_map_t;
+
 void print_check_memory_info();
+
+void phy_memory_init();
+
+// 分配、释放物理内存
+void* get_free_page();
+void free_page(void* p);
