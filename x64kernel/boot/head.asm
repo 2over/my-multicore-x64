@@ -44,15 +44,33 @@ _start:
     ; 向从发送ICW4
     out 0A1h, al
 
-; 屏蔽所有终端，只接收键盘终端
+; 屏蔽所有终端，只接收键盘中断
 .enable_8259a_main:
-    mov al, 11111101b
+    mov al, 11111001b
     out 21h, al
 
 ; 屏蔽从芯片所有终端响应
 .disable_8259a_slave:
-    mov al, 11111111b
+    mov al, 11111101b
     out 0A1h, al
+
+.enable_rtc:
+    mov al, 0x0b        ; RTC寄存器B
+    or al, 0x80         ; 阻断NMI
+    out 0x70, al
+
+    mov al, 0x12        ; 设置寄存器B, 禁止周期性中断，开放更新结束后中断, BCD码， 24小时制
+    out 0x71, al
+
+    ; 通过读, 清零寄存器C,防止相关位被置位， 导致对应的中断不再发生(非必须，稳妥写法)
+    mov al, 0x0c
+    out 0x70, al
+    in al, 0x71
+
+    in al, 0xa1         ; 读8259从片的IMRi粗气你
+    and al, 0xfe        ; 清除bit 0 (此位连接TRC)
+    out 0xa1, al        ; 写回此寄存器
+
 .end_kernel64_main:
     call kernel64_main
 
