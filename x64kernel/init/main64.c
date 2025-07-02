@@ -11,17 +11,9 @@ void kernel64_main(void) {
     phy_memory_init();
     idt_init();
 
-    int i = 10 / 0;
-    // 测试分配虚拟内存
-    void* p = kmalloc(1);
-    printk("0x%p\n", p);
-
-    kfree_s(p, 1);
-
-    p = kmalloc(1);
-    printk("0x%p\n", p);
 
     while (true) {
-        asm volatile("hlt");
+        asm volatile("sti;");
+        asm volatile("xchg %bx, %bx; hlt;");
     }
 }

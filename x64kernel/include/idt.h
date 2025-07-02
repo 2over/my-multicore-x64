@@ -25,6 +25,10 @@ typedef struct _idt_item_t {
     int reserved;
 }__attribute__((pakced)) idt_item_t;
 
+void install_idt_item(int index, int64 handler, short selector, char ist, char dpl);
+
 void idt_init();
+
+void send_eoi(int idt_index);
 
 #endif //MY_MULTICORE_X64_IDT_H
