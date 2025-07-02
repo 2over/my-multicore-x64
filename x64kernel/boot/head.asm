@@ -46,7 +46,7 @@ _start:
 
 ; 屏蔽所有终端，只接收键盘终端
 .enable_8259a_main:
-    mov al, 11111110b
+    mov al, 11111101b
     out 21h, al
 
 ; 屏蔽从芯片所有终端响应
