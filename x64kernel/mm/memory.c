@@ -39,19 +39,18 @@ void phy_memory_init() {
 
     g_physics_memory.pages_total = g_physics_memory.addr_end >> 12;
     g_physics_memory.pages_used = 0;
-    g_physics_memory.pages_free = g_physics_memory.pages_total - (PHY_MEMORY_USE_FROM >> 12);
+    g_physics_memory.pages_free = g_physics_memory.pages_total - ((PHY_MEMORY_USE_FROM  - VALID_MEMORY_FROM)>> 12);
 
     {
         g_physics_memory_map.addr_base = PHY_MEMORY_USE_FROM;
         g_physics_memory_map.bitmap_buf = (uchar*)0x500;
         g_physics_memory_map.pages_total = g_physics_memory.pages_free;
 
-        // 每个byte关联一个page,计算剩余的page需要多少字节
-        u32 bitmap_len = g_physics_memory_map.pages_total / 8;
-
 
         // 初始化为0,防止之前的数据干扰
-        memset(g_physics_memory_map.bitmap_buf, 0, bitmap_len);
+        memset(g_physics_memory_map.bitmap_buf, 0, 512);
+        // 每个byte关联一个page,计算剩余的page需要多少字节
+        u32 bitmap_len = g_physics_memory_map.pages_total / 8;
 
         bitmap_make(&g_physics_memory_map.bitmap, g_physics_memory_map.bitmap_buf, bitmap_len, 0);
     }
@@ -64,7 +63,6 @@ void* get_free_page() {
     assert(-1 != index);
 
     ret = g_physics_memory_map.addr_base + (index << 12);
-    printk("get_free_page: %x\n", ret);
 
     return (void*)ret;
 }
