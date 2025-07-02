@@ -12,6 +12,7 @@ void kernel64_main(void) {
     idt_init();
 
 
+    int i = 10 /0;
     while (true) {
         asm volatile("sti;");
         asm volatile("xchg %bx, %bx; hlt;");

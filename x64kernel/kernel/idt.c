@@ -4,6 +4,7 @@
 
 extern void clock_handler_entry();
 extern void keymap_handler_entry();
+extern void interrupt_handler_0();
 
 static idt_item_t idt_table[255] = {0};
 
@@ -57,6 +58,7 @@ void idt_init() {
         install_idt_item(i, handler, 0x18, 0, 0);
     }
 
+    install_idt_item(0, (int64)&interrupt_handler_0, 0x18, 0, 0);
     install_idt_item(0x20, &clock_handler_entry, 0x18, 0, 0);
     install_idt_item(0x21, &keymap_handler_entry, 0x18, 0, 0);
 
