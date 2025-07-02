@@ -41,19 +41,6 @@ void clock_interrupt_handler() {
     send_eoi(0x20);
 }
 
-void rtc_interrupt_handler() {
-    printk("rtc !\n");
-
-    // 读寄存器c,清空中断标志，不然只会发生一次终端
-    asm volatile(
-            "movb $0x0c, %%al;"     // Move 0x0c into AL
-            "outb %%al, $0x70;"     // Output AL to port 0x70
-            "inb $0x71, %%al;"      // Input from port 0x71 into AL
-            :
-            :
-            : "al", "memory"
-            );
-}
 void install_idt_item(int index, int64 handler, short selector, char ist, char dpl) {
     idt_item_t* item = &idt_table[index];
 

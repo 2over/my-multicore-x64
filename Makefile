@@ -40,7 +40,7 @@ ${BUILD}/kernel64/kernel.bin: ${BUILD}/kernel64/boot/head.o ${BUILD}/kernel64/in
 	${BUILD}/kernel64/kernel/chr_drv/console.o ${BUILD}/kernel64/lib/string.o ${BUILD}/kernel64/kernel/vsprintf.o \
 	${BUILD}/kernel64/kernel/printk.o ${BUILD}/kernel64/mm/memory.o ${BUILD}/kernel64/kernel/bitmap.o ${BUILD}/kernel64/kernel/assert.o \
 	${BUILD}/kernel64/mm/malloc.o ${BUILD}/kernel64/kernel/idt.o ${BUILD}/kernel/asm/intertupt_handler.o ${BUILD}/kernel64/kernel/chr_drv/keyboard.o \
-	${BUILD}/kernel64/kernel/exception.o
+	${BUILD}/kernel64/kernel/exception.o ${BUILD}/kernel64/kernel/time.o
 	$(shell mkdir -p ${BUILD}/kernel64)
 	ld -b elf64-x86-64 -o $@ $^ -Ttext 0x100000
 
@@ -136,6 +136,7 @@ qemu: all
 	-m 4G \
 	-boot c \
 	-cpu Haswell -smp cores=1,threads=2 \
+	-rtc base=utc,driftfix=slew \
 	-hda ./build/hd.img
 
 # 生成的内核镜像给VBox、VMware用
