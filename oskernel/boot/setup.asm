@@ -38,7 +38,7 @@ gdt_code:
     db 0b1_00_1_1000
     ; G_DB_AVL_LIMIT
     db 0b0_1_00_0000 | (SEG_LIMIT >> 16 & 0xf)
-    db SEG_BASE >> 24 & 0xf
+    db SEG_BASE >> 24 & 0xff
 
 gdt_data:
     dw SEG_LIMIT & 0xffff
@@ -48,7 +48,7 @@ gdt_data:
     db 0b1_00_1_0010
     ; G_DB_AVL_LIMIT
     db 0b1_1_00_0000 | (SEG_LIMIT >> 16 & 0xf)
-    db SEG_BASE >> 24 & 0xf
+    db SEG_BASE >> 24 & 0xff
 
 gdt_ptr:
     dw $ - gdt_base

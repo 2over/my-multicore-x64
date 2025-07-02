@@ -63,7 +63,7 @@ static void enter_x64() {
 
 void kernel_main(void) {
     console_init();
-
+    printk("kernel_main .......\n");
     x64_cpu_check();
     enter_x64();
 

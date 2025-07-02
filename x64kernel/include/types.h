@@ -28,4 +28,6 @@ typedef unsigned short u16;
 typedef unsigned int u32;
 typedef unsigned long long u64;
 
+typedef u32 idx_t;
+
 #endif //MY_MULTICORE_X64_TYPES_H
