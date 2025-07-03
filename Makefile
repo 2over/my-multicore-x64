@@ -41,7 +41,8 @@ ${BUILD}/kernel64/kernel.bin: ${BUILD}/kernel64/boot/head.o ${BUILD}/kernel64/in
 	${BUILD}/kernel64/kernel/printk.o ${BUILD}/kernel64/mm/memory.o ${BUILD}/kernel64/kernel/bitmap.o ${BUILD}/kernel64/kernel/assert.o \
 	${BUILD}/kernel64/mm/malloc.o ${BUILD}/kernel64/kernel/idt.o ${BUILD}/kernel64/kernel/asm/intertupt_handler.o ${BUILD}/kernel64/kernel/chr_drv/keyboard.o \
 	${BUILD}/kernel64/kernel/exception.o ${BUILD}/kernel64/kernel/time.o ${BUILD}/kernel64/kernel/task.o ${BUILD}/kernel64/kernel/sched.o \
-	${BUILD}/kernel64/kernel/asm/sched.o ${BUILD}/kernel64/interrupt/clock_interrupt.o ${BUILD}/kernel64/kernel/asm/clock_handler.o
+	${BUILD}/kernel64/kernel/asm/sched.o ${BUILD}/kernel64/interrupt/clock_interrupt.o ${BUILD}/kernel64/kernel/asm/clock_handler.o \
+	${BUILD}/kernel64/kernel/acpi.o
 	$(shell mkdir -p ${BUILD}/kernel64)
 	ld -b elf64-x86-64 -o $@ $^ -Ttext 0x100000
 
