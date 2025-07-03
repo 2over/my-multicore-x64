@@ -119,6 +119,49 @@ void find_apic() {
     }
 }
 
+// 遍历中断控制器结构列表
+void get_apic_info() {
+    assert(NULL != g_apic);
+
+    // 检查checksum
+    if (0 != compute_checksum(g_apic, g_apic->header.length)) {
+        panic("APIC data error!\n");
+    }
+
+    uint8_t* addr = &g_apic->table;
+    uint8_t* addr_end = (uint8_t*)g_apic + g_apic->header.length;
+
+    while(addr < addr_end) {
+        if (0 == *addr) {
+            local_apic_t *apic = addr;
+
+            // CPU数量+  1
+            g_cpu_number++;
+            assert(g_cpu_number <= CPU_MAX);
+
+            // 将local apic信息copy到全局变量中
+            local_apic_t* des = (local_apic_t*)((uint8_t*)&g_local_apic + apic->apic_id * sizeof(local_apic_t));
+            memcpy(des, apic, apic->header.length);
+
+            addr += apic->header.length;
+        } else if (1 == *addr) {
+            io_apic_t* apic = addr;
+
+            io_apic_t *des = (io_apic_t*)((uint8_t*)&g_io_apic + apic->io_apic_id * sizeof(io_apic_t));
+            memcpy(des, apic, apic->header.length);
+
+            physics_addr_map_virtual_addr_2m_2(apic->io_apic_address, apic->io_apic_address, 0x9f, 0x1f);
+
+            printk("io apic address: 0x%08x\n", apic->io_apic_address);
+
+            addr += apic->header.length;
+        } else {
+            // 不管是什么结构，第二个参数都是这个结构的长度
+            addr += *(addr + 1);
+        }
+    }
+}
+
 void acpi_init() {
     g_rsdp = find_rsdp();
 
@@ -146,6 +189,11 @@ void acpi_init() {
             find_apic();
             physics_addr_map_virtual_addr_2m_2(g_apic->local_controller_address,
                                                g_apic->local_controller_address, 0x9f, 0x1f);
+        }
+
+        // 获取local apic与io apic信息
+        {
+            get_apic_info();
         }
 
     } else {
