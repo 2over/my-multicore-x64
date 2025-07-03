@@ -79,4 +79,6 @@ void local_apic_test();
 
 void send_local_apic_eoi();
 
+void io_apic_test();
+
 #endif //MY_MULTICORE_X64_ACPI_H

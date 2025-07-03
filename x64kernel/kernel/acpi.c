@@ -306,3 +306,13 @@ void local_apic_test() {
 void send_local_apic_eoi() {
     *(int*)(g_local_apic_addr + 0xb0) = 0;
 }
+
+void io_apic_test() {
+    uint8_t* io_apic_addr = g_io_apic[0].io_apic_address;
+
+    *(int*)io_apic_addr = 0x14;
+    *(int*)(io_apic_addr + 0x10) = 0x20;
+
+    *(int*)io_apic_addr = 0x15;
+    *(int*)(io_apic_addr + 0x10) = 0;
+}

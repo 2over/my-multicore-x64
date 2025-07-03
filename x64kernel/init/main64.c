@@ -19,7 +19,7 @@ void kernel64_main(void) {
     acpi_init();
     task_init();
 
-    local_apic_test();
+    io_apic_test();
 
 
     while (true) {
