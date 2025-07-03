@@ -9,9 +9,18 @@
 #define ACPI_SIG 0x20445352
 #define APIC_SIG 0x43495041
 
+// 本系统最大支持8个CPU
+#define CPU_MAX 8
+
 rsdp_t* g_rsdp;
 rsdt_t* g_rsdt;
 madt_t* g_apic;
+
+// CPU书来那个
+uint32_t g_cpu_number;
+
+local_apic_t  g_local_apic[CPU_MAX];
+io_apic_t g_io_apic[CPU_MAX];
 
 int* find_rsdp() {
     // check EBDA
@@ -100,6 +109,7 @@ void find_apic() {
         if (APIC_SIG == *(int*)g_rsdt->entry[i]) {
             g_apic = g_rsdt->entry[i];
             printk("APIC addr: 0x%08x\n", g_apic);
+            printk("local_controller_address:: 0x%08x\n", g_apic->local_controller_address);
             break;
         }
     }
@@ -134,6 +144,8 @@ void acpi_init() {
         // 找到APIC
         {
             find_apic();
+            physics_addr_map_virtual_addr_2m_2(g_apic->local_controller_address,
+                                               g_apic->local_controller_address, 0x9f, 0x1f);
         }
 
     } else {
