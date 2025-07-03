@@ -18,6 +18,10 @@ ap_init:
 
     mov byte[0x1200], 12
 
+; 解锁
+.spinunlock:
+    mov byte[lock_state], 0 ; 设置锁的值为0,表示解锁状态
+
 .hlt:
     sti
     hlt

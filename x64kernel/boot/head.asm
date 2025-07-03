@@ -131,12 +131,3 @@ printk:
 
     sti
     ret
-
-global ap_init
-ap_init:
-    mov rsi, 0xfee00000
-    mov dword [rsi + 0x310], 0 << 24
-    mov dword [rsi + 0x300], 0x000c4500 ; 先发送INIT IPI
-    mov dword [rsi + 0x300], (0xf000 >> 12) | 0x000c4600   ; Start up IPI
-
-    ret
