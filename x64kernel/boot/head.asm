@@ -46,7 +46,7 @@ _start:
 
 ; 屏蔽所有终端，只接收键盘中断
 .enable_8259a_main:
-    mov al, 11111001b
+    mov al, 11111110b
     out 21h, al
 
 ; 屏蔽从芯片所有终端响应
@@ -75,6 +75,16 @@ _start:
     in al, 0xa1         ; 读8259从片的IMRi粗气你
     and al, 0xfe        ; 清除bit 0 (此位连接TRC)
     out 0xa1, al        ; 写回此寄存器
+
+; 每10ms发生一次时钟中断
+.set_8253_frequency:
+    mov al, 0x36    ; 设置PIT的工作模式
+    out 0x43, al    ; 发送到控制端口
+
+    mov ax, 11932   ; 为100Hz计算的除数
+    out 0x40, al    ; 发送低字节到通道0
+    mov al, ah
+    out 0x40, al    ; 发送高字节到通道0
 
 .end_kernel64_main:
     call kernel64_main
