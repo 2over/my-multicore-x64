@@ -292,3 +292,17 @@ void print_apic_info() {
 
 
 }
+
+void local_apic_test() {
+    uint8_t* local_apic_addr = g_apic->local_controller_address;
+
+    *(int*)(local_apic_addr + 0x3e0) = 0x0b;
+    *(int*)(local_apic_addr + 0x320) = 0x20020;
+    *(int*)(local_apic_addr + 0x380) = 1000;
+}
+
+void send_local_apic_eoi() {
+    uint8_t* local_apic_addr = g_apic->local_controller_address;
+
+    *(int*)(local_apic_addr + 0xb0) = 0;
+}
