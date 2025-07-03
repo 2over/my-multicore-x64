@@ -48,6 +48,7 @@ task_t* task_create(task_fun_t fun, char* name) {
     tasks[task->pid] = task;
 
     task->function = fun;
+    task->esp0 = kmalloc(4096) + PAGE_SIZE;
 
     strcpy(task->name, name);
 
@@ -89,6 +90,7 @@ void task_exit(task_t* task, int exit_code) {
 
             current = NULL;
 
+            kfree_s(task->esp0, 4096);
             kfree_s(task, sizeof(task_t));
 
             break;
@@ -96,6 +98,10 @@ void task_exit(task_t* task, int exit_code) {
     }
 }
 
+int64 get_esp0(task_t* task) {
+    assert(NULL != task);
+    return task->esp0;
+}
 void task_init() {
     task_create(idle_task, "idle");
 }

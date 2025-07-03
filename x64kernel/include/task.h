@@ -56,6 +56,7 @@ typedef struct task_t {
     task_context_t  context;
     int             scheduling_times;   // 调度次数
     int             exit_code;
+    int64           esp0;
 }__attribute__((packed)) task_t;
 
 task_t* task_create(task_fun_t fun, char *name);
@@ -69,5 +70,7 @@ void task_init();
 void sched();
 
 void task_exit(task_t* task, int exit_code);
+
+int64 get_esp0(task_t* task);
 
 #endif //MY_MULTICORE_X64_TASK_H
