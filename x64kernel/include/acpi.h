@@ -7,6 +7,9 @@
 
 #include "types.h"
 
+// 本系统最大支持8个CPU
+#define CPU_MAX 8
+
 typedef struct {
     char        signature[8];           // "RSD PTR "
     uint8_t     checksum;               // Checksum for first 20 bytes
@@ -75,10 +78,8 @@ void print_rsdt_info();
 
 void print_apic_info();
 
-void local_apic_test();
 
 void send_local_apic_eoi();
 
-void io_apic_test();
 
 #endif //MY_MULTICORE_X64_ACPI_H

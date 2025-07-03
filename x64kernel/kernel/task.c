@@ -10,7 +10,7 @@ task_t* tasks[NR_TASKS] = {0};
 
 void* idle_task(void* arg) {
     for (int i = 0; i < 10000; ++i) {
-        printk("%d\n", i);
+        printk("%d\n", *(char*)0x1200);
     }
 }
 

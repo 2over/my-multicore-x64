@@ -7,6 +7,7 @@
 #include "../include/time.h"
 #include "../include/task.h"
 #include "../include/acpi.h"
+#include "../include/apic.h"
 
 long startup_time;
 
@@ -19,7 +20,8 @@ void kernel64_main(void) {
     acpi_init();
     task_init();
 
-    io_apic_test();
+    io_apic_run();
+    ap_init();
 
 
     while (true) {

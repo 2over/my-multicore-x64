@@ -23,12 +23,13 @@ DEBUG:= -g
 
 HD_IMG_NAME:= "hd.img"
 
-all: ${BUILD}/boot/boot.o ${BUILD}/boot/setup.o ${BUILD}/system.bin ${BUILD}/kernel64/system.bin
+all: ${BUILD}/boot/boot.o ${BUILD}/boot/setup.o ${BUILD}/system.bin ${BUILD}/kernel64/system.bin ${BUILD}/boot/ap_init.o
 	$(shell rm -rf $(BUILD)/$(HD_IMG_NAME))
 	bximage -q -hd=16 -func=create -sectsize=512 -imgmode=flat $(BUILD)/$(HD_IMG_NAME)
 	dd if=${BUILD}/boot/boot.o of=$(BUILD)/$(HD_IMG_NAME) bs=512 seek=0 count=1 conv=notrunc
 	dd if=${BUILD}/boot/setup.o of=$(BUILD)/$(HD_IMG_NAME) bs=512 seek=1 count=2 conv=notrunc
 	dd if=${BUILD}/system.bin of=$(BUILD)/$(HD_IMG_NAME) bs=512 seek=3 count=30 conv=notrunc
+	dd if=${BUILD}/boot/ap_init.o of=$(BUILD)/$(HD_IMG_NAME) bs=512 seek=33 count=4 conv=notrunc
 	dd if=${BUILD}/kernel64/system.bin of=$(BUILD)/$(HD_IMG_NAME) bs=512 seek=41 count=5000 conv=notrunc
 
 # 下面是64位内核用的
@@ -42,7 +43,7 @@ ${BUILD}/kernel64/kernel.bin: ${BUILD}/kernel64/boot/head.o ${BUILD}/kernel64/in
 	${BUILD}/kernel64/mm/malloc.o ${BUILD}/kernel64/kernel/idt.o ${BUILD}/kernel64/kernel/asm/intertupt_handler.o ${BUILD}/kernel64/kernel/chr_drv/keyboard.o \
 	${BUILD}/kernel64/kernel/exception.o ${BUILD}/kernel64/kernel/time.o ${BUILD}/kernel64/kernel/task.o ${BUILD}/kernel64/kernel/sched.o \
 	${BUILD}/kernel64/kernel/asm/sched.o ${BUILD}/kernel64/interrupt/clock_interrupt.o ${BUILD}/kernel64/kernel/asm/clock_handler.o \
-	${BUILD}/kernel64/kernel/acpi.o ${BUILD}/kernel64/mm/page.o
+	${BUILD}/kernel64/kernel/acpi.o ${BUILD}/kernel64/mm/page.o ${BUILD}/kernel64/kernel/apic.o
 	$(shell mkdir -p ${BUILD}/kernel64)
 	ld -b elf64-x86-64 -o $@ $^ -Ttext 0x100000
 

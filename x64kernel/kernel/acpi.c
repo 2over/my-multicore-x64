@@ -9,9 +9,6 @@
 #define ACPI_SIG 0x20445352
 #define APIC_SIG 0x43495041
 
-// 本系统最大支持8个CPU
-#define CPU_MAX 8
-
 rsdp_t* g_rsdp;
 rsdt_t* g_rsdt;
 madt_t* g_apic;
@@ -296,23 +293,7 @@ void print_apic_info() {
 
 }
 
-void local_apic_test() {
-
-    *(int*)(g_local_apic_addr + 0x3e0) = 0x0b;
-    *(int*)(g_local_apic_addr + 0x320) = 0x20020;
-    *(int*)(g_local_apic_addr + 0x380) = 1000;
-}
 
 void send_local_apic_eoi() {
     *(int*)(g_local_apic_addr + 0xb0) = 0;
-}
-
-void io_apic_test() {
-    uint8_t* io_apic_addr = g_io_apic[0].io_apic_address;
-
-    *(int*)io_apic_addr = 0x14;
-    *(int*)(io_apic_addr + 0x10) = 0x20;
-
-    *(int*)io_apic_addr = 0x15;
-    *(int*)(io_apic_addr + 0x10) = 0;
 }

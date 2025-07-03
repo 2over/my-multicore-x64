@@ -169,6 +169,12 @@ protected_mode:
     mov bl, 30
     call read_hd
 
+    ; 将AP初始化程序读入内存
+    mov edi, 0xf000
+    mov ecx, 33
+    mov bl, 4
+    call read_hd
+
     ; 将64位内核读入内存
 .load_x64_kernel
     xor esi, esi
