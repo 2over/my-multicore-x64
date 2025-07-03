@@ -9,12 +9,9 @@ extern task_t* current;
 task_t* tasks[NR_TASKS] = {0};
 
 void* idle_task(void* arg) {
-    printk("cover\n");
-
-//    while (true) {
-//        asm volatile("sti;");
-//        asm volatile("hlt;");
-//    }
+    for (int i = 0; i < 10000; ++i) {
+        printk("%d\n", i);
+    }
 }
 
 static int find_empty_process() {
@@ -65,6 +62,15 @@ task_fun_t get_task_function(task_t* task) {
     assert(NULL != task->function);
 
     return task->function;
+}
+
+task_context_t* get_task_context(task_t* task) {
+    assert(NULL != task);
+    return &task->context;
+}
+
+int inc_scheduling_times(task_t* task) {
+    return task->scheduling_times++;
 }
 
 void task_exit(task_t* task, int exit_code) {
