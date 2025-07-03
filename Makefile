@@ -142,7 +142,7 @@ qemu: all
 	qemu-system-x86_64 \
 	-m 4G \
 	-boot c \
-	-cpu Haswell -smp cores=1,threads=2 \
+	-cpu Haswell -smp cores=1,threads=3 \
 	-rtc base=utc,driftfix=slew \
 	-hda ./build/hd.img
 

@@ -5,11 +5,24 @@ extern kernel64_main
 extern vsprintf
 extern strlen
 extern console_write
+extern ap_run_flow
 
 extern printk_buff
 
 global _start
 _start:
+    jmp kernel64_entry
+
+; ap处理器内核入口
+ap_kernel_entry:
+    call ap_run_flow
+.hlt:
+    sti
+    hlt
+    jmp .hlt
+
+; BSP处理器内核入口
+kernel64_entry:
     xchg bx, bx
     xchg bx, bx
 

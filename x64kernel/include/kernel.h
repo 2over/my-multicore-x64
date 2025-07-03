@@ -7,6 +7,10 @@
 #include "types.h"
 #include "stdarg.h"
 
+#define CLI     asm volatile("cli;");
+#define STI     asm volatile("sti;");
+#define PAUSE   asm volatile("pause;");
+
 int vsprintf(char *buf, const char *fmt, va_list args);
 
 int printk(const char * fmt, ...);

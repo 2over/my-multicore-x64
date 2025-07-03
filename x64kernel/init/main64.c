@@ -11,6 +11,15 @@
 
 long startup_time;
 
+void ap_run_flow() {
+    printk("here\n");
+
+    while (true) {
+        asm volatile("sti;");
+        asm volatile("hlt;");
+    }
+}
+
 void kernel64_main(void) {
 
     console_init();
@@ -20,12 +29,12 @@ void kernel64_main(void) {
     acpi_init();
     task_init();
 
-    io_apic_run();
+//    io_apic_run();
     ap_init();
 
 
     while (true) {
-        printk("kernel64_main\n");
+//        printk("kernel64_main\n");
         asm volatile("sti;");
         asm volatile("xchg %bx, %bx; hlt;");
     }
