@@ -12,11 +12,6 @@ rtc_handler_entry:
     call rtc_interrupt_handler
     iretq
 
-global clock_handler_entry
-clock_handler_entry:
-    call clock_interrupt_handler
-
-    iretq
 
 global keymap_handler_entry
 keymap_handler_entry:
