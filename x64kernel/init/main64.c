@@ -5,6 +5,7 @@
 #include "../include/idt.h"
 #include "../include/io.h"
 #include "../include/time.h"
+#include "../include/task.h"
 
 long startup_time;
 
@@ -14,6 +15,7 @@ void kernel64_main(void) {
     phy_memory_init();
     idt_init();
     time_init();
+    task_init();
 
     while (true) {
         asm volatile("sti;");
