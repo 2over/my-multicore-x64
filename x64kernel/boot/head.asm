@@ -59,8 +59,13 @@ _start:
     or al, 0x80         ; 阻断NMI
     out 0x70, al
 
-    mov al, 0x12        ; 设置寄存器B, 禁止周期性中断，开放更新结束后中断, BCD码， 24小时制
+    mov al, 0x52        ; 设置寄存器B, 开放周期性中断，更新结束后终端, BCD码， 24小时制
     out 0x71, al
+
+    mov al, 0x8a        ; CMOS寄存器A
+    out 0x70, al
+    mov al, 0x2f        ; 32kHz, 500ms的周期性中断
+    out 0x71, al        ; 写回CMOS寄存器A
 
     ; 通过读, 清零寄存器C,防止相关位被置位， 导致对应的中断不再发生(非必须，稳妥写法)
     mov al, 0x0c

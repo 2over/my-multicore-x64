@@ -150,22 +150,34 @@ void time_init(void) {
 }
 
 void rtc_interrupt_handler() {
-    tm time = {0};
-    time_read(&time);
 
-    printk("%d%02d-%02d-%02d ", century, time.tm_year, time.tm_mon, time.tm_mday);
-    printk("%02d:%02d:%02d\n", time.tm_hour, time.tm_min, time.tm_sec);
+    // 先读寄存器C,判断发生的是什么中断
+    // 如果发生周期性终端，位6为1,如果发生了更新结束中断，位4为1
+    uchar creg = 0;
 
-    // 读取寄存器c,清空中断标志，不然只会发生一次中断
     asm volatile (
-            "movb $0x0c, %%al;"     // Move 0x0c into AL
+            "movb $0x8c, %%al;"     // Move 0x0c into AL
             "outb %%al, $0x70;"     // Output AL to port 0x70
-            "inb $0x71, %%al;"      // Input from port 0x71 into AL
+            "inb $0x71, %%al;"
+            "movb %%al, %0;"        // Input from port 0x71 into AL
+            : "=r"(creg)
+            :
+            : "al", "memory");
 
-            :
-            :
-            :"al", "memory"
-            );
+    // 发生更新周期结束终端
+    if (creg & 0x10) {
+        tm time = {0};
+        time_read(&time);
+
+        printk("%d%02d-%02d-%02d ", century, time.tm_year, time.tm_mon, time.tm_mday);
+        printk("%02d:%02d:%02d\n", time.tm_hour, time.tm_min, time.tm_sec);
+    }
+
+    // 发生周期性中断
+    if (creg & 0x40) {
+        printk("11\n");
+    }
+
 
     send_eoi(0x28);
 }
