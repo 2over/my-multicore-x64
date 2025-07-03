@@ -18,6 +18,7 @@ void kernel64_main(void) {
     task_init();
 
     while (true) {
+        printk("kernel64_main\n");
         asm volatile("sti;");
         asm volatile("xchg %bx, %bx; hlt;");
     }

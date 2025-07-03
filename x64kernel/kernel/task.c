@@ -9,10 +9,10 @@ task_t* tasks[NR_TASKS] = {0};
 void* idle_task(void* arg) {
     printk("cover\n");
 
-    while (true) {
-        asm volatile("sti;");
-        asm volatile("hlt;");
-    }
+//    while (true) {
+//        asm volatile("sti;");
+//        asm volatile("hlt;");
+//    }
 }
 
 static int find_empty_process() {

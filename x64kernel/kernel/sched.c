@@ -1,7 +1,7 @@
 #include "../include/kernel.h"
 #include "../include/task.h"
 
-extern void switch_task(task_t* task);
+extern void switch_task();
 
 extern task_t* tasks[NR_TASKS];
 
@@ -45,5 +45,5 @@ void sched() {
     next->state = TASK_RUNNING;
     current = next;
 
-    switch_task(next);
+    switch_task();
 }
