@@ -1,4 +1,7 @@
 #include "../include/acpi.h"
+#include "../include/assert.h"
+#include "../include/kernel.h"
+#include "../include/string.h"
 
 #define EBDA_ADDRESS_POINTER 0x40E
 #define RSDP_SIGNATURE "RSD PTR "
@@ -23,4 +26,55 @@ int* find_rsdp() {
     }
 
     return NULL; // RSDP not found
+}
+
+static uint8_t compute_checksum(void* addr, size_t len) {
+    uint8_t *p = addr;
+    uint8_t sum = 0;
+
+    for (size_t i = 0; i < len; i++) {
+        sum += p[i];
+    }
+
+    return sum;
+}
+
+void print_rsdp_info() {
+    rsdp_t* rsdp = find_rsdp();
+
+    if (NULL == rsdp) {
+        printk("not found rsdp, exit...\n");
+        while(true);
+    }
+
+    printk("rsdp address : %08x\n", rsdp);
+
+    // 判断校验和
+    if (0 == rsdp->revision) {
+        // 如果修订号为0,表示ACPI 1.0,只有结构中的前20字节
+        if (0 != compute_checksum(rsdp, 20)) {
+            printk("rsdp checksum check fail...\n");
+            while(true);
+        }
+
+        printk("rsdp revision: %d->ACPI 1.0\n", rsdp->revision);
+    } else {
+        printk("ACPI2.0, pass....\n");
+        while(true);
+    }
+
+    char buf[10] = {0};
+
+    memcpy(buf, rsdp->signature, 8);
+    printk("rsdp signature: %s\n", buf);
+
+    memset(buf, 10, 0);
+    memcpy(buf, rsdp->oem_id, 8);
+    printk("rsdp oem_id: %s\n", buf);
+
+    printk("rsdp address: 0x%08x\n", rsdp->rsdt_address);
+
+    if (2 == rsdp->revision) {
+        // 输出属于ACPI2.0 的数据，用不上
+    }
 }

@@ -18,7 +18,7 @@ void kernel64_main(void) {
     time_init();
     task_init();
 
-    printk("%x\n", find_rsdp());
+    print_rsdp_info();
 
     while (true) {
         printk("kernel64_main\n");
