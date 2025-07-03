@@ -20,7 +20,7 @@ void kernel64_main(void) {
     task_init();
 
 
-    print_rsdt_info();
+    print_apic_info();
 
     while (true) {
         printk("kernel64_main\n");

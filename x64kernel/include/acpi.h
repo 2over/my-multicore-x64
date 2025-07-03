@@ -38,6 +38,33 @@ typedef struct {
     uint32_t            entry[8];  // 表项，每一项都是一个32位的物理地址，指向其他的SDT表
 }__attribute__((packed)) rsdt_t;
 
+typedef struct {
+    acpi_sdt_header_t header;           // MADT的表头
+    uint32_t local_controller_address;  // 本地APIC的地址
+    uint32_t flags;                     // 各种标志位
+    uint8_t* table;                     // 表项的开始位置
+}__attribute__((packed)) madt_t;
+
+typedef struct {
+    uint8_t type;   // 表项的类型
+    uint8_t length; // 表项的长度
+}__attribute__((packed)) madt_entry_header_t;
+
+typedef struct {
+    madt_entry_header_t header; // 表项头部
+    uint8_t acpi_processor_id;  // ACPI处理器的ID
+    uint8_t apic_id;            // 本地APIC的ID
+    uint32_t flags;             // 各种标志位
+}__attribute__((packed)) local_apic_t;
+
+typedef struct {
+    madt_entry_header_t header; // 表项头部
+    uint8_t io_apic_id;         // IO APIC的ID
+    uint8_t reserved;           // 保留字段
+    uint32_t io_apic_address;   // IO APIC的地址
+    uint32_t global_system_interrupt_base;  // 全局系统中断基地址
+}__attribute__((packed)) io_apic_t;
+
 int* find_rsdp();
 
 void print_rsdp_info();
@@ -45,5 +72,7 @@ void print_rsdp_info();
 void acpi_init();
 
 void print_rsdt_info();
+
+void print_apic_info();
 
 #endif //MY_MULTICORE_X64_ACPI_H

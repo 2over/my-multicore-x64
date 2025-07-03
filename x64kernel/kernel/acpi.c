@@ -7,9 +7,11 @@
 #define EBDA_ADDRESS_POINTER 0x40E
 #define RSDP_SIGNATURE "RSD PTR "
 #define ACPI_SIG 0x20445352
+#define APIC_SIG 0x43495041
 
 rsdp_t* g_rsdp;
 rsdt_t* g_rsdt;
+madt_t* g_apic;
 
 int* find_rsdp() {
     // check EBDA
@@ -83,6 +85,30 @@ void print_rsdp_info() {
     }
 }
 
+void find_apic() {
+    assert(NULL != g_rsdt);
+
+    // 检查checksum
+    if (0 != compute_checksum(g_rsdt, g_rsdt->header.length)) {
+        panic("rsdt data error!\n");
+    }
+
+    for (int i = 0; i < 8; ++i) {
+        if (0 == g_rsdt->entry[i]) continue;
+
+        // 0x43495041是APIC的ASCII码
+        if (APIC_SIG == *(int*)g_rsdt->entry[i]) {
+            g_apic = g_rsdt->entry[i];
+            printk("APIC addr: 0x%08x\n", g_apic);
+            break;
+        }
+    }
+
+    if (NULL == g_apic) {
+        panic("not found APIC!\n");
+    }
+}
+
 void acpi_init() {
     g_rsdp = find_rsdp();
 
@@ -103,6 +129,11 @@ void acpi_init() {
             g_rsdt = addr;
             physics_map_virtual_addr_2m(addr, addr);
 
+        }
+
+        // 找到APIC
+        {
+            find_apic();
         }
 
     } else {
@@ -151,5 +182,53 @@ void print_rsdt_info() {
     }
 
     printk("===== end : RSDT INFO =====\n");
+
+}
+
+void print_apic_info() {
+    assert(NULL != g_apic);
+
+    // 检查checksum
+    if (0 != compute_checksum(g_apic, g_apic->header.length)) {
+        panic("APIC data error!\n");
+    }
+
+    printk("===== start: APIC INFO =====\n");
+
+    printk("APIC local_controller_address : 0x%08x\n", g_apic->local_controller_address);
+    printk("APIC flags: 0x%08x\n", g_apic->flags);
+
+    // 遍历中断控制寄存器列表
+    uint8_t* addr = &g_apic->table;
+    uint8_t* addr_end = (uint8_t*)g_apic + g_apic->header.length;
+
+    while (addr < addr_end) {
+        if (0 == *addr) {
+            local_apic_t *apic = addr;
+
+            printk("-----------\n");
+            printk("Local APIC len: %d\n", apic->header.length);
+            printk("acpi_processor_id: 0x%02x\n", apic->acpi_processor_id);
+            printk("apic_id: 0x%02x\n", apic->apic_id);
+            printk("flags: 0x%08x\n", apic->flags);
+            printk("-----------\n");
+
+            addr += apic->header.length;
+        } else if (1 == *addr) {
+            io_apic_t* apic = addr;
+
+            printk("-----------\n");
+            printk("IO APIC len: %d\n", apic->header.length);
+            printk("io_apic_id: 0x%02x\n", apic->io_apic_id);
+            printk("io_apic_address: 0x%08x\n", apic->io_apic_address);
+            printk("global_system_interrupt_base: 0x%08x\n", apic->global_system_interrupt_base);
+            printk("-----------\n");
+            addr += apic->header.length;
+        } else {
+            addr += *(addr + 1);
+        }
+    }
+    printk("===== end: APIC INFO =====\n");
+
 
 }
