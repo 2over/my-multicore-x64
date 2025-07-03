@@ -44,9 +44,9 @@ _start:
     ; 向从发送ICW4
     out 0A1h, al
 
-; 屏蔽所有终端，只接收键盘中断
+; 屏蔽所有中断，只接收键盘中断
 .enable_8259a_main:
-    mov al, 11111111b
+    mov al, 11111110b
     out 21h, al
 
 ; 屏蔽从芯片所有终端响应

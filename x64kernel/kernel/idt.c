@@ -35,11 +35,6 @@ void general_interrupt_handler() {
     while(true);
 }
 
-void clock_interrupt_handler() {
-    printk("clock !\n");
-
-    send_eoi(0x20);
-}
 
 void install_idt_item(int index, int64 handler, short selector, char ist, char dpl) {
     idt_item_t* item = &idt_table[index];

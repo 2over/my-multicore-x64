@@ -58,6 +58,13 @@ task_t* task_create(task_fun_t fun, char* name) {
     return task;
 }
 
+task_fun_t get_task_function(task_t* task) {
+    assert(NULL != task);
+    assert(NULL != task->function);
+
+    return task->function;
+}
+
 void task_init() {
     task_create(idle_task, "idle");
 }

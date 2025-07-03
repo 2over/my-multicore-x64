@@ -29,8 +29,11 @@ typedef struct task_t {
     task_fun_t      function;
 }__attribute__((packed)) task_t;
 
-task_t* taask_create(task_fun_t fun, char *name);
+task_t* task_create(task_fun_t fun, char *name);
+task_fun_t get_task_function(task_t* task);
 
 void task_init();
+
+void sched();
 
 #endif //MY_MULTICORE_X64_TASK_H
