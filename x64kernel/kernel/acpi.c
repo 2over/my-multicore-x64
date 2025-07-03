@@ -22,6 +22,8 @@ uint32_t g_cpu_number;
 local_apic_t  g_local_apic[CPU_MAX];
 io_apic_t g_io_apic[CPU_MAX];
 
+uint8_t* g_local_apic_addr;
+
 int* find_rsdp() {
     // check EBDA
     ushort ebda_base = *((ushort*) EBDA_ADDRESS_POINTER);
@@ -108,8 +110,9 @@ void find_apic() {
         // 0x43495041是APIC的ASCII码
         if (APIC_SIG == *(int*)g_rsdt->entry[i]) {
             g_apic = g_rsdt->entry[i];
+            g_local_apic_addr = g_apic->local_controller_address;
             printk("APIC addr: 0x%08x\n", g_apic);
-            printk("local_controller_address:: 0x%08x\n", g_apic->local_controller_address);
+            printk("local_controller_address:: 0x%08x\n", g_local_apic_addr);
             break;
         }
     }
@@ -294,15 +297,12 @@ void print_apic_info() {
 }
 
 void local_apic_test() {
-    uint8_t* local_apic_addr = g_apic->local_controller_address;
 
-    *(int*)(local_apic_addr + 0x3e0) = 0x0b;
-    *(int*)(local_apic_addr + 0x320) = 0x20020;
-    *(int*)(local_apic_addr + 0x380) = 1000;
+    *(int*)(g_local_apic_addr + 0x3e0) = 0x0b;
+    *(int*)(g_local_apic_addr + 0x320) = 0x20020;
+    *(int*)(g_local_apic_addr + 0x380) = 1000;
 }
 
 void send_local_apic_eoi() {
-    uint8_t* local_apic_addr = g_apic->local_controller_address;
-
-    *(int*)(local_apic_addr + 0xb0) = 0;
+    *(int*)(g_local_apic_addr + 0xb0) = 0;
 }
