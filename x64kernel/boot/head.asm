@@ -102,6 +102,9 @@ _start:
 
 global printk
 printk:
+
+    cli
+
     push rdi
     push r9
     push r8
@@ -125,4 +128,6 @@ printk:
 
     ; 栈还原
     add rsp, 8 * 6
+
+    sti
     ret

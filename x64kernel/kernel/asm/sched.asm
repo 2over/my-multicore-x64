@@ -4,6 +4,7 @@
 extern get_task_function
 extern task_exit
 extern inc_scheduling_times
+extern get_task_context
 
 extern current
 ; rdi = current task
@@ -32,8 +33,35 @@ switch_task:
     mov rdi, [current]
     call task_exit
 
+    ret
 
 .restore_context:
+    mov rdi, [current]
+    call get_task_context
 
-.end:
-    ret
+;    mov rax, [rax + 8 * 2]
+    mov rbx, [rax + 8 * 3]
+    mov rcx, [rax + 8 * 4]
+    mov rdx, [rax + 8 * 5]
+    mov rdi, [rax + 8 * 6]
+    mov rsi, [rax + 8 * 7]
+    mov r8, [rax + 8 * 10]
+    mov r9, [rax + 8 * 11]
+    mov r10, [rax + 8 * 12]
+    mov r11, [rax + 8 * 13]
+    mov r12, [rax + 8 * 14]
+    mov r13, [rax + 8 * 15]
+    mov r14, [rax + 8 * 16]
+    mov r15, [rax + 8 * 17]
+
+    mov rbp, [eax + 8 * 8]
+    mov rsp, [rax + 8 * 9]
+
+    ; 恢复rflags
+    push qword [rax]
+    popf
+
+    ; rip
+    push qword [eax + 8]
+    mov rax, [rax + 8 * 2]  ; 恢复rax
+    ret     ; 返回前两句push的代码位置

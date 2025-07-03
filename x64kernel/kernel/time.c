@@ -145,8 +145,8 @@ void time_init(void) {
     time_read(&time);
     startup_time = mktime(&time);
 
-    printk("%d%02d-%02d-%02d ", century, time.tm_year, time.tm_mon, time.tm_mday);
-    printk("%02d:%02d:%02d(%d)\n", time.tm_hour, time.tm_min, time.tm_sec, startup_time);
+//    printk("%d%02d-%02d-%02d ", century, time.tm_year, time.tm_mon, time.tm_mday);
+//    printk("%02d:%02d:%02d(%d)\n", time.tm_hour, time.tm_min, time.tm_sec, startup_time);
 }
 
 void rtc_interrupt_handler() {
