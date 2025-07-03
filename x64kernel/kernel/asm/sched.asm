@@ -17,8 +17,10 @@ switch_task:
     jne .restore_context        ; 如果不等于0,表示不是第一次调度，跳到恢复上下文
 
     ; 取到function
+    mov rdi, [current]
     call get_task_function
 
+    sti
     call rax
 
 ;    sti
