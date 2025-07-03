@@ -2,6 +2,7 @@
 #include "../include/assert.h"
 #include "../include/kernel.h"
 #include "../include/string.h"
+#include "../include/mm.h"
 
 #define EBDA_ADDRESS_POINTER 0x40E
 #define RSDP_SIGNATURE "RSD PTR "
@@ -92,7 +93,15 @@ void acpi_init() {
         }
 
         printk("rsdp revision: %d->ACPI 1.0\n", g_rsdp->revision);
-        printk("rsdt address: 0x%x\n", g_rsdp->rsdt_address);
+
+        // 为RSDT address做虚拟内存一个内设
+        {
+            char* addr = g_rsdp->rsdt_address;
+            printk("rsdt address: 0x%08x\n",addr);
+            physics_map_virtual_addr_2m(addr, addr);
+
+        }
+
     } else {
         printk("ACPI2.0, pass ...\n");
         while(true);

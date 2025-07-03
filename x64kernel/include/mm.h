@@ -43,3 +43,8 @@ void free_page(void* p);
 // 分配、释放虚拟内存
 void* kmalloc(size_t size);
 void kfree_s(void *obj, int size);
+
+/**
+ * 将虚拟内存映射到指定的物理页
+ */
+void physics_map_virtual_addr_2m(uint32_t addr, uint32_t phy_addr_base);
