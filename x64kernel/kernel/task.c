@@ -4,6 +4,8 @@
 #include "../include/assert.h"
 #include "../include/string.h"
 
+extern task_t* current;
+
 task_t* tasks[NR_TASKS] = {0};
 
 void* idle_task(void* arg) {
@@ -63,6 +65,29 @@ task_fun_t get_task_function(task_t* task) {
     assert(NULL != task->function);
 
     return task->function;
+}
+
+void task_exit(task_t* task, int exit_code) {
+    assert(NULL != task);
+
+    for (int i = 0; i < NR_TASKS; ++i) {
+        task_t* tmp = tasks[i];
+
+        if (task == tmp) {
+            printk("task exit: %s\n", tmp->name);
+
+            tmp->exit_code = exit_code;
+
+            // 先移除，后面有父子进程再响应处理
+            tasks[i] = NULL;
+
+            current = NULL;
+
+            kfree_s(task, sizeof(task_t));
+
+            break;
+        }
+    }
 }
 
 void task_init() {

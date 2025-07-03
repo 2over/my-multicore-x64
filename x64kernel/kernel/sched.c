@@ -41,6 +41,9 @@ void sched() {
     }
 
     task_t* next = find_ready_task();
+    if (NULL == next) {
+        return ;
+    }
 
     next->state = TASK_RUNNING;
     current = next;

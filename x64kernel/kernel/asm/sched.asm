@@ -2,6 +2,8 @@
 [BITS 64]
 
 extern get_task_function
+extern task_exit
+
 extern current
 ; rdi = current task
 
@@ -18,5 +20,11 @@ switch_task:
 
 ;    sti
 
+; 任务例程执行完会返回到这里
+; 这个操作需要原子执行
+.task_exit:
+    mov rsi, 0
+    mov rdi, [current]
+    call task_exit
 .end:
     ret
