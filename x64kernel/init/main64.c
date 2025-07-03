@@ -16,9 +16,9 @@ void kernel64_main(void) {
     phy_memory_init();
     idt_init();
     time_init();
+    acpi_init();
     task_init();
 
-    print_rsdp_info();
 
     while (true) {
         printk("kernel64_main\n");

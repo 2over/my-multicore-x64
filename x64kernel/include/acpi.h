@@ -23,4 +23,6 @@ int* find_rsdp();
 
 void print_rsdp_info();
 
+void acpi_init();
+
 #endif //MY_MULTICORE_X64_ACPI_H

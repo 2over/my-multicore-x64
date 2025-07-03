@@ -7,6 +7,8 @@
 #define RSDP_SIGNATURE "RSD PTR "
 #define ACPI_SIG 0x20445352
 
+rsdp_t* g_rsdp;
+
 int* find_rsdp() {
     // check EBDA
     ushort ebda_base = *((ushort*) EBDA_ADDRESS_POINTER);
@@ -76,5 +78,23 @@ void print_rsdp_info() {
 
     if (2 == rsdp->revision) {
         // 输出属于ACPI2.0 的数据，用不上
+    }
+}
+
+void acpi_init() {
+    g_rsdp = find_rsdp();
+
+    if (0 == g_rsdp->revision) {
+        // 如果修订号为0,表示ACPI1.0,只有结构中的前20字节
+        if (0 != compute_checksum(g_rsdp, 20)) {
+            printk("rsdp checksum check fail...\n");
+            while(true);
+        }
+
+        printk("rsdp revision: %d->ACPI 1.0\n", g_rsdp->revision);
+        printk("rsdt address: 0x%x\n", g_rsdp->rsdt_address);
+    } else {
+        printk("ACPI2.0, pass ...\n");
+        while(true);
     }
 }
