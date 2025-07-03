@@ -9,6 +9,7 @@
 #define ACPI_SIG 0x20445352
 
 rsdp_t* g_rsdp;
+rsdt_t* g_rsdt;
 
 int* find_rsdp() {
     // check EBDA
@@ -98,6 +99,8 @@ void acpi_init() {
         {
             char* addr = g_rsdp->rsdt_address;
             printk("rsdt address: 0x%08x\n",addr);
+
+            g_rsdt = addr;
             physics_map_virtual_addr_2m(addr, addr);
 
         }
@@ -106,4 +109,47 @@ void acpi_init() {
         printk("ACPI2.0, pass ...\n");
         while(true);
     }
+}
+
+void print_rsdt_info() {
+    assert(NULL != g_rsdt);
+
+    char buf[10] = {0};
+
+    // 检查checksum
+    if (0 != compute_checksum(g_rsdt, g_rsdt->header.length)) {
+        panic("rsdt data error!\n");
+    }
+
+    printk("===== start: RSDT INFO =====\n");
+    printk("rsdt addr: 0x%08x\n", g_rsdt);
+    printk("rsdt length: %d\n", g_rsdt->header.length);
+    printk("rsdt entry addr: 0x%08x\n", (char*)g_rsdt + sizeof(acpi_sdt_header_t));
+
+    memcpy(buf, g_rsdt->header.signature, 4);
+    printk("rsdt signature: %s\n", buf);
+
+    printk("rsdt revision: %d\n", g_rsdt->header.revision);
+
+    memset(buf, 0, 10);
+    memcpy(buf, g_rsdt->header.oem_id, 6);
+    printk("rsdt oem_id: %s\n", buf);
+
+    memset(buf,0 ,10);
+    memcpy(buf, g_rsdt->header.oem_table_id, 8);
+    printk("rsdt oem_table_id: %s\n", buf);
+
+    printk("rsdt oem_revision: 0x%08x\n", g_rsdt->header.oem_revision);
+    printk("rsdt creator_id :0x%08x\n", g_rsdt->header.creator_id);
+    printk("rsdt creator_revision: 0x%08x\n", g_rsdt->header.creator_revision);
+
+    printk("rsdt MADT list: \n");
+    for (int i = 0; i < 8; ++i) {
+        if (0 == g_rsdt->entry[i]) continue;
+
+        printk("    0x%08x\n", g_rsdt->entry[i]);
+    }
+
+    printk("===== end : RSDT INFO =====\n");
+
 }

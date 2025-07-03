@@ -20,6 +20,8 @@ void kernel64_main(void) {
     task_init();
 
 
+    print_rsdt_info();
+
     while (true) {
         printk("kernel64_main\n");
         asm volatile("sti;");
