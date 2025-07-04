@@ -46,7 +46,7 @@ ${BUILD}/kernel64/kernel.bin: ${BUILD}/kernel64/boot/head.o ${BUILD}/kernel64/in
 	${BUILD}/kernel64/kernel/acpi.o ${BUILD}/kernel64/mm/page.o ${BUILD}/kernel64/kernel/apic.o ${BUILD}/kernel64/kernel/gdt.o \
 	${BUILD}/kernel64/kernel/cpu.o ${BUILD}/kernel64/kernel/asm/cpu_broadcast_handler_entry.o ${BUILD}/kernel64/kernel/asm/time_slice_handler_entry.o \
 	${BUILD}/kernel64/kernel/asm/sched64.o ${BUILD}/kernel64/kernel/asm/printk.o ${BUILD}/kernel64/kernel/kernel_thread.o \
-	${BUILD}/kernel64/kernel/ya_shell.o
+	${BUILD}/kernel64/kernel/ya_shell.o ${BUILD}/kernel64/kernel/mmzone.o
 	$(shell mkdir -p ${BUILD}/kernel64)
 	ld -b elf64-x86-64 -o $@ $^ -Ttext 0x100000
 
@@ -135,7 +135,7 @@ bochs: all
 
 qemug: all
 	qemu-system-x86_64 \
-	-m 4G \
+	-m 5G \
 	-boot c \
 	-cpu Haswell -smp cores=1,threads=2 \
 	-hda ./build/hd.img \
@@ -143,11 +143,29 @@ qemug: all
 
 qemu: all
 	qemu-system-x86_64 \
-	-m 4G \
+	-m 5G \
 	-boot c \
 	-cpu Haswell -smp cores=1,threads=3 \
 	-rtc base=utc,driftfix=slew \
 	-hda ./build/hd.img
+
+numa: clean all
+	qemu-system-x86_64 -m 5G \
+ 	-cpu Haswell -smp cpus=5 \
+	-numa node,nodeid=0,cpus=0-1,mem=1706 \
+    -numa node,nodeid=1,cpus=2-3,mem=1706 \
+    -numa node,nodeid=2,cpus=4,mem=1708 \
+    -hda ./build/hd.img
+
+numag: clean all
+	qemu-system-x86_64 -m 5G \
+ 	-cpu Haswell -smp cpus=5 \
+	-numa node,nodeid=0,cpus=0-1,mem=1706 \
+    -numa node,nodeid=1,cpus=2-3,mem=1706 \
+    -numa node,nodeid=2,cpus=4,mem=1708 \
+    -hda ./build/hd.img \
+    -s -S
+
 
 # 生成的内核镜像给VBox、VMware用
 vmdk: $(BUILD)/master.vmdk

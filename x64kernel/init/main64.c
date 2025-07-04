@@ -10,6 +10,7 @@
 #include "../include/apic.h"
 #include "../include/gdt.h"
 #include "../include/cpu.h"
+#include "../include/linux/mmzone.h"
 
 extern idtr_data_t  idtr_data;
 extern gdtr_data_t gdtr_data;
@@ -54,12 +55,12 @@ void kernel64_main(void) {
     bsp_init();
     ap_init();
 
+    pglist_data_init();
+
     task_init();
 
-//    io_apic_run();
-    console_init();
+    print_check_memory_info();
     cpu_broadcast();
-//    cpu_signal(1);
 
     asm volatile("sti;");
 
