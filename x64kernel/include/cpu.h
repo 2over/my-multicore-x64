@@ -23,4 +23,6 @@ void bsp_init();
 
 void cpu_broadcast();
 
+void cpu_signal(u8 index);
+
 #endif //MY_MULTICORE_X64_CPU_H

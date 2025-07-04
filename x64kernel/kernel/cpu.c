@@ -31,4 +31,14 @@ void bsp_init() {
 void cpu_broadcast() {
     *(uint32_t*)ICR_HIGH = 0;
     *(uint32_t*)ICR_LOW = 0x000840f0;
+
+    // 0x000140f0 只投递给自己
+    // 0x000840f0 投递全部，包括自己
+    // 0x000c40f0 投递给全部，不包括自己
+}
+
+void cpu_signal(u8 index) {
+    // 指定某个核处理
+    *(uint32_t*)ICR_HIGH = index << 24;
+    *(uint32_t*)ICR_LOW = 0x000040f0;
 }

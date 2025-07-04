@@ -59,7 +59,8 @@ void kernel64_main(void) {
 //    io_apic_run();
     ap_init();
 
-    cpu_broadcast();
+//    cpu_broadcast();
+    cpu_signal(1);
 
 
     while (true) {
