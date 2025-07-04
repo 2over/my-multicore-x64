@@ -16,6 +16,7 @@ extern send_local_apic_eoi
 ;extern local_apic_clock_run
 extern switch_task64
 extern get_esp0
+extern local_apic_clock_run
 
 ; rdi
 ; rip
@@ -51,7 +52,7 @@ cpu_broadcast_handler_entry:
 
 .unlock:
     SPIN_UNLOCK byte [lock_state]
-
+    ; call send_local_apic_eoi          ; 抢到任务的cpu不能send eoi,因为这时候send了，如果发生了终端，任务就没机会执行了
 
 .call:
     call switch_task64
@@ -69,10 +70,11 @@ cpu_broadcast_handler_entry:
 
     SPIN_UNLOCK byte [lock_state]
 
+    call local_apic_clock_run
     call send_local_apic_eoi
 
     iretq
-
+; 如果核没抢到任务，表示当前并不繁忙，就让强盗任务的那个核把任务执行完
 .no_ready_task:
     swapgs
     mov rsi, [gs:0]
@@ -83,7 +85,8 @@ cpu_broadcast_handler_entry:
 
     SPIN_UNLOCK byte [lock_state]
 
-    ; 这个必须在unlock后面，如果在unlock前面，就有可能马上发生终端，那就没有机会解锁了
-    call send_local_apic_eoi
+
+    call local_apic_clock_run
+    call send_local_apic_eoi ; 这个必须在unlock后面，如果在unlock前面，就有可能马上发生终端，那就没有机会解锁了
 
     iretq

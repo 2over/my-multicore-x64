@@ -170,6 +170,60 @@ void console_write(char *buf, u32 count)
     set_cursor();
 }
 
+void console_write2(char *buf, u32 count, int offset) {
+    char ch;
+    char *ptr = (char *)MEM_BASE + offset;
+    while (count--)
+    {
+        ch = *buf++;
+        switch (ch)
+        {
+            case ASCII_NUL:
+                break;
+            case ASCII_BEL:
+                break;
+            case ASCII_BS:
+                command_bs();
+                break;
+            case ASCII_HT:
+                break;
+            case ASCII_LF:
+                command_lf();
+                command_cr();
+                break;
+            case ASCII_VT:
+                break;
+            case ASCII_FF:
+                command_lf();
+                break;
+            case ASCII_CR:
+                command_cr();
+                break;
+            case ASCII_DEL:
+                command_del();
+                break;
+            default:
+                if (x >= WIDTH)
+                {
+                    x -= WIDTH;
+                    pos -= ROW_SIZE;
+                    command_lf();
+                }
+
+                *ptr = ch;
+                ptr++;
+                *ptr = 0x07;
+                ptr++;
+
+//                pos += 2;
+//                x++;
+                break;
+        }
+    }
+
+    set_cursor();
+}
+
 void console_init(void) {
     console_clear();
 }

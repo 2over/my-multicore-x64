@@ -22,7 +22,7 @@ extern sched64
 global time_slice_handler_entry
 time_slice_handler_entry:
 .check:
-    pushrdi
+    push rdi
 
     swapgs
     mov rdi, [gs:8]
@@ -128,6 +128,9 @@ time_slice_handler_entry:
     ; rip
     push qword [rax + 8]        ; rip
     mov rax, [rax + 8 * 2]      ; 恢复rax
+
+    call local_apic_clock_run
+    call send_local_apic_eoi
 
     iretq               ; 返回前两句push的代码闻之
 .no_store_context:

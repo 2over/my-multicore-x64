@@ -40,13 +40,11 @@ void ap_run_flow() {
 
     while (true) {
         printk("ap_run_flow\n");
-//        asm volatile("sti;");
         asm volatile("hlt;");
     }
 }
 
 void kernel64_main(void) {
-
     console_init();
     phy_memory_init();
     idt_init();
@@ -54,20 +52,17 @@ void kernel64_main(void) {
     time_init();
     acpi_init();
     bsp_init();
+    ap_init();
 
     task_init();
 
-//    io_apic_run();
-    ap_init();
-
+    console_init();
     cpu_broadcast();
-//    cpu_signal(1);
 
-
+    asm volatile("sti;");
 
     while (true) {
         printk("kernel64_main\n");
-//        asm volatile("sti;");
         asm volatile("xchg %bx, %bx; hlt;");
     }
 }

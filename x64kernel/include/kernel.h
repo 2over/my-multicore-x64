@@ -16,6 +16,7 @@ int vsprintf(char *buf, const char *fmt, va_list args);
 int printk(const char * fmt, ...);
 
 int printk_intr(const char* fmt, ...);
+int printk_fixed_position(int offset, const char* fmt, ...);
 #define MY_MULTICORE_X64_KERNEL_H
 
 #endif //MY_MULTICORE_X64_KERNEL_H
