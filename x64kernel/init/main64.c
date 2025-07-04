@@ -35,9 +35,9 @@ void ap_run_flow() {
 
     asm volatile("sti;");
 
-    printk("here\n");
 
     while (true) {
+        printk("ap_run_flow\n");
         asm volatile("sti;");
         asm volatile("hlt;");
     }
@@ -57,6 +57,8 @@ void kernel64_main(void) {
 
 //    io_apic_run();
     ap_init();
+
+    cpu_broadcast();
 
 
     while (true) {

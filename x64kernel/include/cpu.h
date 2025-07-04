@@ -21,4 +21,6 @@ kpcr_t* kpcr_create(uint32_t id);
 
 void bsp_init();
 
+void cpu_broadcast();
+
 #endif //MY_MULTICORE_X64_CPU_H
