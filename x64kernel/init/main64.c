@@ -33,6 +33,7 @@ void ap_run_flow() {
                  "mov %gs:16, %rsp;"
                  "swapgs;");
 
+    enable_local_apic();
     asm volatile("sti;");
 
 

@@ -47,3 +47,7 @@ void ap_init() {
 
     printk("ap init complete, numbers: %d\n", *(uint8_t*)AP_INIT_NUMBER_ADDR);
 }
+
+void enable_local_apic() {
+    asm volatile("btsl $8, %0" :: "m" (*(volatile long*)(g_local_apic_addr + 0xf0)));
+}
