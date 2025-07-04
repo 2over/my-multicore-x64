@@ -8,6 +8,7 @@ extern console_write
 extern ap_run_flow
 
 extern printk_buff
+extern g_cpu_info
 
 global _start
 _start:
@@ -25,6 +26,30 @@ ap_kernel_entry:
 kernel64_entry:
     xchg bx, bx
     xchg bx, bx
+
+    ; 获取cpu的品牌信息
+    mov eax, 0x80000002
+    cpuid
+    mov [g_cpu_info + 4 * 0], eax
+    mov [g_cpu_info + 4 * 1], ebx
+    mov [g_cpu_info + 4 * 2], ecx
+    mov [g_cpu_info + 4 * 3], edx
+
+    mov eax, 0x80000003
+    cpuid
+    mov [g_cpu_info + 4 * 4], eax
+    mov [g_cpu_info + 4 * 5], ebx
+    mov [g_cpu_info + 4 * 6], ecx
+    mov [g_cpu_info + 4 * 7], edx
+
+    mov eax, 0x80000003
+    cpuid
+    mov [g_cpu_info + 4 * 8], eax
+    mov [g_cpu_info + 4 * 9], ebx
+    mov [g_cpu_info + 4 * 10], ecx
+    mov [g_cpu_info + 4 * 11], edx
+
+
 
 .init_8259a:
     ; 向主发送ICW1

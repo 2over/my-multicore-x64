@@ -76,3 +76,33 @@ void idt_init() {
     asm volatile("xchg %bx, %bx;");
     asm volatile("lidt idtr_data;");
 }
+
+void print_idt() {
+    for (int i = 0; i < 20; ++i) {
+        printk("%d: 0x%016x\n", i, idt_table[i]);
+    }
+
+    printk("...\n");
+}
+
+void print_idtr() {
+    printk("base addr: 0x%016x\n", idtr_data.base);
+    printk("limit : 0x%04x\n", idtr_data.limit);
+}
+
+void print_gdt() {
+    uint32_t* gdt = (uint32_t*)*(uint32_t*)(0x7f2d + 2);
+
+    for (int i = 0; i < 10; ++i) {
+        printk("%d: low: 0x%08x, high: 0x%08x\n", i, *(gdt + i * 2), *(gdt + i * 2 + 1));
+    }
+
+    printk("...\n");
+}
+
+void print_gdtr() {
+    idtr_data_t* gdtr = (idtr_data_t*)0x7f2d;
+
+    printk("base addr: 0x%016x\n", gdtr->base);
+    printk("limit : 0x%04x\n", gdtr->limit);
+}

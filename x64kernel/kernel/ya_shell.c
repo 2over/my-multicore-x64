@@ -221,6 +221,38 @@ void exec_ya_shell() {
         console_init();
     } else if (!strcmp("mm", commands[0])) {
         print_check_memory_info();
+    } else if (!strcmp("cpus", commands[0])) {
+        print_cpu_info();
+    } else if(!strcmp("tasks", commands[0])) {
+        print_tasks();
+    } else if (!strcmp("r", commands[0])) {
+        if (!strcmp("idtr", commands[1])) {
+            print_idtr();
+        } else {
+            print_gdtr();
+        }
+    } else if (!strcmp("task", commands[0])) {
+        int num = string_to_int(commands[1]);
+        if (num > 4) {
+            printk(" Not more than 4!\n");
+        } else {
+            task_test(num);
+        }
+    } else if (!strcmp("cpu", commands[0])) {
+        int num = string_to_int(commands[1]);
+        if (num > g_cpu_number) {
+            printk("Exceed CPU count : %d!\n", g_cpu_number);
+        } else {
+            console_init();
+            cpu_signal(num);
+        }
+    } else if (!strcmp("mmu", commands[0])) {
+        long num = hex_to_int(commands[1]);
+        print_viraddr_phyaddr(num);
+    } else if (!strcmp("idt", commands[0])) {
+        print_idt();
+    } else if (!strcmp("gdt", commands[0])) {
+        print_gdt();
     } else {
         for (int i = 0; i < commands_len; ++i) {
             printk("%s\n", commands[i]);

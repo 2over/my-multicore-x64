@@ -49,3 +49,5 @@ void kfree_s(void *obj, int size);
  */
 void physics_map_virtual_addr_2m(uint32_t addr, uint32_t phy_addr_base);
 void physics_addr_map_virtual_addr_2m_2(uint64_t addr, uint32_t phy_addr_base, uint16_t pdt_flag, uint16_t pdpt_flag);
+
+void print_viraddr_phyaddr(uint64_t addr);

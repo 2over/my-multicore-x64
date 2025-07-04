@@ -77,4 +77,8 @@ int64 get_esp0(task_t* task);
 
 void set_task_ready(task_t* task);
 
+
+void print_tasks();
+
+void task_test(int size);
 #endif //MY_MULTICORE_X64_TASK_H

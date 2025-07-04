@@ -1,12 +1,17 @@
 #include "../include/cpu.h"
 #include "../include/mm.h"
+#include "../include/kernel.h"
 
 extern uint8_t* g_local_apic_addr;
+extern uint32_t g_cpu_number;
 
 #define ICR_LOW (g_local_apic_addr + 0x300)
 #define ICR_HIGH (g_local_apic_addr + 0x310)
 
 kpcr_t* kpcrs[8] = {0};
+
+
+char* g_cpu_info[48] = {0};
 
 kpcr_t* kpcr_create(uint32_t id) {
     kpcr_t* kpcr = kmalloc(sizeof(kpcr_t));
@@ -41,4 +46,17 @@ void cpu_signal(u8 index) {
     // 指定某个核处理
     *(uint32_t*)ICR_HIGH = index << 24;
     *(uint32_t*)ICR_LOW = 0x000040f0;
+}
+
+void print_cpu_info() {
+    printk("CPU brand : %s\n", g_cpu_info);
+    printk("CPU number: %d\n", g_cpu_number);
+
+    printk("list all cpu info : \n");
+
+    for (int i = 0; i < g_cpu_number; ++i) {
+        kpcr_t* kpcr = kpcrs[i];
+
+        printk("  processor id : %d, cpu stack: 0x%08x, run task: 0x%x\n", kpcr->id, kpcr->esp0, kpcr->task);
+    }
 }

@@ -101,3 +101,28 @@ void physics_addr_map_virtual_addr_2m_2(uint64_t addr, uint32_t phy_addr_base, u
     uint64_t* pdt_addr = (uint64_t*)(pdt_descriptor >> 12 << 12);
     *(pdt_addr + pdt_index) = phy_addr_base >> 21 << 21 | pdt_flag;
 }
+
+void print_viraddr_phyaddr(uint64_t addr) {
+    uint64_t pml4_index, pdpt_index, pdt_index;
+
+    get_indexes(addr, &pml4_index, &pdpt_index, &pdt_index);
+
+    uint64_t* PML4_addr = (uint64_t*)FOUR_LEVEL_HEAD_TABLE_ADDR;
+    uint64_t pdpt_descriptor = *(PML4_addr + pml4_index);
+
+    uint64_t pdt_descriptor = 0;
+    if (0 != pdpt_descriptor) {
+        uint64_t *pdpt_addr = (uint64_t*)(pdpt_descriptor >> 12 << 12);
+        pdt_descriptor = (uint64_t)*(pdpt_addr + pdpt_index);
+    }
+
+    uint64_t pd_descriptor = 0;
+    if (0 != pdt_descriptor) {
+        uint64_t *pdt_addr = (uint64_t*)(pdt_descriptor >> 12 << 12);
+        pd_descriptor = (uint64_t) *(pdt_addr + pdt_index);
+    }
+
+    printk("PML4 index :%d, physics addr : 0x%08x\n", pml4_index, pdpt_descriptor);
+    printk("PDPT index: %d, phusics addr: 0x%08x\n", pdpt_index, pdt_descriptor);
+    printk("PDT idnex: %d, physics addr: 0x%08x\n", pdt_index, pd_descriptor);
+}

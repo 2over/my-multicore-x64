@@ -25,4 +25,14 @@ void cpu_broadcast();
 
 void cpu_signal(u8 index);
 
+void print_cpu_info();
+
+void print_idt();
+
+void print_gdt();
+
+void print_idtr();
+void print_gdtr();
+
+
 #endif //MY_MULTICORE_X64_CPU_H

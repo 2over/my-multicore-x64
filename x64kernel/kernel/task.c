@@ -157,10 +157,76 @@ void set_task_ready(task_t* task) {
     task->state = TASK_READY;
 }
 
+void print_tasks() {
+    for (int i = 0; i < NR_TASKS; ++i) {
+        task_t* task = tasks[i];
+        if (NULL == task) continue;
+
+        char* status = (1 == task->state) ? "running" : "ready";
+
+        printk("[%s]status : %s, sched times : %d, stack: 0x%08x\n", task->name, status, task->scheduling_times, task->esp0);
+    }
+}
+
 void task_init() {
     task_create(kernel_thread, "kernel_thread");
 //    task_create(t1, "t1");
 //    task_create(t2, "t2");
 //    task_create(t3, "t3");
 //    task_create(t4, "t4");
+}
+
+void into_to_char(int num, char *str) {
+    int i = 0, j, rem, len = 0;
+    if (num == 0) {
+        str[0] = '0';
+        str[1] = '\0';
+        return;
+    }
+
+    while (num != 0) {
+        rem = num % 10;
+        if (rem > 9) str[i++] = (rem-10) + 'A';
+        else str[i++] = rem + '0';
+        num = num / 10;
+    }
+
+    str[i] = '\0';
+
+    //Reverse the string to get the correct result
+    for (j = 0, i = i - 1; j < i; j++, i--) {
+        char temp = str[j];
+        str[j] = str[i];
+        str[i] = temp;
+    }
+}
+
+void* t_function(void* arg) {
+    int processor_id = 0;
+    task_t* task = NULL;
+
+    for (int i = 0; i < 200000; ++i) {
+        asm volatile("swapgs;"
+                     "mov %%gs:0, %0;"
+                     "mov %%gs:8, %1;"
+                     "swapgs;"
+                     :"=r"(processor_id), "=r"(task)::"rax");
+
+        printk_fixed_position(160 * (20 + task->pid), "[%s] processor id : %d, t1: %d, pid: %d", task->name, processor_id, i, task->pid);
+    }
+}
+
+void task_test(int size) {
+    for (int i = 0; i < size; ++i) {
+        char name[32] = "t";
+        char str[2] = {0};
+
+        into_to_char(i, str);
+
+        strcat(name, str);
+
+        printk("%s\n", name);
+
+        task_create(t_function, name);
+    }
 }
