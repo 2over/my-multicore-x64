@@ -12,6 +12,8 @@
 long startup_time;
 
 void ap_run_flow() {
+    *(uint8_t*)0x7f33 = 0; // 解锁
+
     printk("here\n");
 
     while (true) {

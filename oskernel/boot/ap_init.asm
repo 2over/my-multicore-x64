@@ -23,7 +23,7 @@ ap_init:
 
 .spin:                      ; 自旋等待的标签
     xchg al, [0x7f33]   ; 尝试上锁
-    test al, al             ; 检查原来的锁炸ungtai
+    test al, al             ; 检查原来的锁状态
     jnz .spin               ; 如果原来的锁已经被上锁(即lock的值为1),则进行自旋等待
 
 
@@ -91,8 +91,8 @@ long_mode:
     ; 已经初始化的AP数量+ 1
     inc byte [0x7f2c]
 
-    ; 解锁
-    mov byte [0x7f33], 0    ; 设置锁的值为0,表示解锁状态
+;    ; 解锁
+;    mov byte [0x7f33], 0    ; 设置锁的值为0,表示解锁状态
 
     jmp 0x100002
 
