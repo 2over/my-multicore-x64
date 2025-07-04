@@ -293,7 +293,3 @@ void print_apic_info() {
 
 }
 
-
-void send_local_apic_eoi() {
-    *(int*)(g_local_apic_addr + 0xb0) = 0;
-}

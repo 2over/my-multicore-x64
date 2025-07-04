@@ -23,4 +23,6 @@ void local_apic_clock_cyling_run();
 
 void clear_apic_clock();
 
+void send_local_apic_eoi();
+
 #endif //MY_MULTICORE_X64_APIC_H

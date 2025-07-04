@@ -34,12 +34,13 @@ void ap_run_flow() {
                  "swapgs;");
 
     enable_local_apic();
+
     asm volatile("sti;");
 
 
     while (true) {
         printk("ap_run_flow\n");
-        asm volatile("sti;");
+//        asm volatile("sti;");
         asm volatile("hlt;");
     }
 }
@@ -59,15 +60,14 @@ void kernel64_main(void) {
 //    io_apic_run();
     ap_init();
 
-//    cpu_broadcast();
+    cpu_broadcast();
 //    cpu_signal(1);
 
-    local_apic_clock_run();
 
 
     while (true) {
         printk("kernel64_main\n");
-        asm volatile("sti;");
+//        asm volatile("sti;");
         asm volatile("xchg %bx, %bx; hlt;");
     }
 }

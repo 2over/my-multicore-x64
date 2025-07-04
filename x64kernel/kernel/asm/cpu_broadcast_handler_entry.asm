@@ -9,6 +9,8 @@ lock_state: db 0
 [BITS 64]
 
 extern printk
+extern send_local_apic_eoi
+extern local_apic_clock_run
 
 ; rdi
 ; rip
@@ -29,6 +31,9 @@ cpu_broadcast_handler_entry:
     call printk
 
     pop rdi
+
+    call local_apic_clock_run
+    call send_local_apic_eoi
 
     ; 这里如果不解锁，其他核是进不来的
     SPIN_UNLOCK byte [lock_state]

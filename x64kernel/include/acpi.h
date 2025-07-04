@@ -79,7 +79,6 @@ void print_rsdt_info();
 void print_apic_info();
 
 
-void send_local_apic_eoi();
 
 
 #endif //MY_MULTICORE_X64_ACPI_H

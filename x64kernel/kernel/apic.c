@@ -67,3 +67,8 @@ void local_apic_clock_cyling_run() {
 void clear_apic_clock() {
     *(volatile int*)(g_local_apic_addr + 0x380) = 0;
 }
+
+
+void send_local_apic_eoi() {
+    *(int*)(g_local_apic_addr + 0xb0) = 0;
+}
