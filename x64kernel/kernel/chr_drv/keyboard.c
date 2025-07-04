@@ -8,6 +8,11 @@
 
 #include "../../include/types.h"
 #include "../../include/idt.h"
+#include "../../include/kernel.h"
+#include "../../include/io.h"
+#include "../../include/ya_shell.h"
+
+extern ushort g_shell_command_off;
 
 #define INV 0 // 不可见字符
 #define CODE_PRINT_SCREEN_DOWN 0xB7
@@ -232,8 +237,8 @@ static bool extcode_state;  // 扩展码状态
 void keymap_handler(int idt_index) {
     uchar ext = 2; // keymap 状态索引，默认没有 shift 键
 
-    // 告诉中断控制芯片中断已处理（好像不做这个事也没啥问题）
-    send_eoi(idt_index);
+//    // 告诉中断控制芯片中断已处理（好像不做这个事也没啥问题）
+//    send_eoi(idt_index);
 
     uchar scancode = in_byte(0x60);
 
@@ -327,5 +332,23 @@ void keymap_handler(int idt_index) {
     if (ch == INV)
         return;
 
+    // 解决没有shell命令把这个删了: [cover /]:
+    if (8 == ch && 0 == g_shell_command_off) {
+        return;
+    }
+
     printk("%c", ch);
+
+    // shell相关
+    if (10 == ch) { // enter
+        exec_ya_shell();
+        return;
+    }
+
+    if (8 == ch) { // backspace
+        del_ya_shell();
+        return;
+    }
+
+    run_ya_shell(ch);
 }

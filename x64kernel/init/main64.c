@@ -39,7 +39,7 @@ void ap_run_flow() {
 
 
     while (true) {
-        printk("ap_run_flow\n");
+//        printk("ap_run_flow\n");
         asm volatile("hlt;");
     }
 }

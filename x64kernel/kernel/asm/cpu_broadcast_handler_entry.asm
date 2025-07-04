@@ -61,12 +61,12 @@ cpu_broadcast_handler_entry:
     iretq
 
 .cpu_busy:
-    swapgs
-    mov rsi, [gs:0]
-    swapgs
-
-    mov rdi, msg_2
-    call printk
+;    swapgs
+;    mov rsi, [gs:0]
+;    swapgs
+;
+;    mov rdi, msg_2
+;    call printk
 
     SPIN_UNLOCK byte [lock_state]
 
@@ -76,12 +76,12 @@ cpu_broadcast_handler_entry:
     iretq
 ; 如果核没抢到任务，表示当前并不繁忙，就让强盗任务的那个核把任务执行完
 .no_ready_task:
-    swapgs
-    mov rsi, [gs:0]
-    swapgs
-
-    mov rdi, msg_3
-    call printk
+;    swapgs
+;    mov rsi, [gs:0]
+;    swapgs
+;
+;    mov rdi, msg_3
+;    call printk
 
     SPIN_UNLOCK byte [lock_state]
 

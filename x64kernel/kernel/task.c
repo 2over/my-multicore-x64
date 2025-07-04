@@ -5,6 +5,7 @@
 #include "../include/string.h"
 
 extern task_t* current;
+extern void* kernel_thread(void* arg);
 
 task_t* tasks[NR_TASKS] = {0};
 
@@ -15,95 +16,44 @@ void* t1(void* arg) {
     for (int i = 0; i < 500000; ++i) {
         asm volatile("swapgs;"
                      "mov %%gs:0, %0;"
-                     "swapgs;"
-                :"=r"(processor_id)::"rax");
+                     "swapgs;":"=r"(processor_id)::"rax");
 
-        printk_fixed_position(160 * 20, "processor id:%d, t1: %d", processor_id, i);
+        printk_fixed_position(160*20, "processor id:%d, t1 %d", processor_id, i);
     }
 }
 
 void* t2(void* arg) {
     int processor_id = 0;
-
     for (int i = 0; i < 500000; ++i) {
         asm volatile("swapgs;"
                      "mov %%gs:0, %0;"
-                     "swapgs;"
-                :"=r"(processor_id)::"rax");
+                     "swapgs;":"=r"(processor_id)::"rax");
 
-        printk_fixed_position(160 * 21, "processor id:%d, t2: %d", processor_id, i);
+        printk_fixed_position(160*21, "processor id:%d, t2 %d", processor_id, i);
     }
 }
 
 void* t3(void* arg) {
     int processor_id = 0;
-
     for (int i = 0; i < 500000; ++i) {
         asm volatile("swapgs;"
                      "mov %%gs:0, %0;"
-                     "swapgs;"
-                :"=r"(processor_id)::"rax");
+                     "swapgs;":"=r"(processor_id)::"rax");
 
-        printk_fixed_position(160 * 22, "processor id:%d, t3: %d", processor_id, i);
+        printk_fixed_position(160*22, "processor id:%d, t3 %d", processor_id, i);
     }
 }
 
 void* t4(void* arg) {
     int processor_id = 0;
-
     for (int i = 0; i < 500000; ++i) {
         asm volatile("swapgs;"
                      "mov %%gs:0, %0;"
-                     "swapgs;"
-                :"=r"(processor_id)::"rax");
+                     "swapgs;":"=r"(processor_id)::"rax");
 
-        printk_fixed_position(160 * 23, "processor id:%d, t4: %d", processor_id, i);
+        printk_fixed_position(160*23, "processor id:%d, t4 %d", processor_id, i);
     }
 }
-//void* t1(void* arg) {
-//    int processor_id = 0;
-//
-//    for (int i = 0; i < 500000; ++i) {
-//        asm volatile("swapgs;"
-//                     "mov %%gs:0, %0;"
-//                     "swapgs;":"=r"(processor_id)::"rax");
-//
-//        printk_fixed_position(160*20, "processor id:%d, t1 %d", processor_id, i);
-//    }
-//}
-//
-//void* t2(void* arg) {
-//    int processor_id = 0;
-//    for (int i = 0; i < 500000; ++i) {
-//        asm volatile("swapgs;"
-//                     "mov %%gs:0, %0;"
-//                     "swapgs;":"=r"(processor_id)::"rax");
-//
-//        printk_fixed_position(160*21, "processor id:%d, t2 %d", processor_id, i);
-//    }
-//}
-//
-//void* t3(void* arg) {
-//    int processor_id = 0;
-//    for (int i = 0; i < 500000; ++i) {
-//        asm volatile("swapgs;"
-//                     "mov %%gs:0, %0;"
-//                     "swapgs;":"=r"(processor_id)::"rax");
-//
-//        printk_fixed_position(160*22, "processor id:%d, t3 %d", processor_id, i);
-//    }
-//}
-//
-//void* t4(void* arg) {
-//    int processor_id = 0;
-//    for (int i = 0; i < 500000; ++i) {
-//        asm volatile("swapgs;"
-//                     "mov %%gs:0, %0;"
-//                     "swapgs;":"=r"(processor_id)::"rax");
-//
-//        printk_fixed_position(160*23, "processor id:%d, t4 %d", processor_id, i);
-//    }
-//}
 void* idle_task(void* arg) {
     for (int i = 0; i < 100000; ++i) {
         printk("%d\n", i);
@@ -178,7 +128,7 @@ void task_exit(task_t* task, int exit_code) {
         task_t* tmp = tasks[i];
 
         if (task == tmp) {
-            printk("task exit: %s\n", tmp->name);
+//            printk("task exit: %s\n", tmp->name);
 
             tmp->exit_code = exit_code;
 
@@ -208,8 +158,9 @@ void set_task_ready(task_t* task) {
 }
 
 void task_init() {
-    task_create(t1, "t1");
-    task_create(t2, "t2");
-    task_create(t3, "t3");
-    task_create(t4, "t4");
+    task_create(kernel_thread, "kernel_thread");
+//    task_create(t1, "t1");
+//    task_create(t2, "t2");
+//    task_create(t3, "t3");
+//    task_create(t4, "t4");
 }

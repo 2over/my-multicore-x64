@@ -59,7 +59,7 @@ kernel64_entry:
 
 ; 屏蔽所有中断，只接收键盘中断
 .enable_8259a_main:
-    mov al, 11111111b
+    mov al, 11111101b
     out 21h, al
 
 ; 屏蔽从芯片所有中断响应
