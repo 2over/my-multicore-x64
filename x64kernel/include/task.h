@@ -69,6 +69,8 @@ void task_init();
 
 void sched();
 
+task_t* sched64();
+
 void task_exit(task_t* task, int exit_code);
 
 int64 get_esp0(task_t* task);
