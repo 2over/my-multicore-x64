@@ -9,6 +9,7 @@
 #include "../include/acpi.h"
 #include "../include/apic.h"
 #include "../include/gdt.h"
+#include "../include/cpu.h"
 
 extern idtr_data_t  idtr_data;
 extern gdtr_data_t gdtr_data;
@@ -38,6 +39,16 @@ void kernel64_main(void) {
     gdt_init();
     time_init();
     acpi_init();
+
+    bsp_init();
+
+    uint64_t esp0 = 0;
+    asm volatile("swapgs;"
+                 "mov %%gs:16, %0;"
+                 "swapgs;" : "=r"(esp0) :
+                 : "rax");
+
+    printk("---------------%x\n", esp0);
     task_init();
 
 //    io_apic_run();
