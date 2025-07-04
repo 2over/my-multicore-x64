@@ -75,4 +75,6 @@ void task_exit(task_t* task, int exit_code);
 
 int64 get_esp0(task_t* task);
 
+void set_task_ready(task_t* task);
+
 #endif //MY_MULTICORE_X64_TASK_H

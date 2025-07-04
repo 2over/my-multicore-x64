@@ -102,6 +102,13 @@ int64 get_esp0(task_t* task) {
     assert(NULL != task);
     return task->esp0;
 }
+
+void set_task_ready(task_t* task) {
+    assert(NULL != task);
+
+    task->state = TASK_READY;
+}
+
 void task_init() {
     task_create(idle_task, "idle");
 }
