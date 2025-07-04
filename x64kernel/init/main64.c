@@ -8,15 +8,19 @@
 #include "../include/task.h"
 #include "../include/acpi.h"
 #include "../include/apic.h"
+#include "../include/gdt.h"
 
+extern idtr_data_t  idtr_data;
+extern gdtr_data_t gdtr_data;
 long startup_time;
 
 void ap_run_flow() {
     *(uint8_t*)0x7f33 = 0; // 解锁
 
+    asm volatile ("lgdt gdtr_data;");
     // 给AP核写入idtr 支持中断
     asm volatile ( "lidt idtr_data;");
-    int i = 10 / 0;
+
 
     printk("here\n");
 
@@ -31,6 +35,7 @@ void kernel64_main(void) {
     console_init();
     phy_memory_init();
     idt_init();
+    gdt_init();
     time_init();
     acpi_init();
     task_init();
