@@ -86,7 +86,7 @@ void print_check_memory_info() {
     for (int i = 0; i < times; ++i) {
         check_memory_item_t* tmp = p_data + i;
 
-        printk("\t %x, %x, %x, %x, %d\n",
+        printk("\t from :0x%x%08x,  len: 0x%x%08x, flag: %d\n",
                tmp->base_addr_high, tmp->base_addr_low, tmp->length_high, tmp->length_low, tmp->type);
     }
     printk("======== memory check info ========\n");

@@ -68,6 +68,39 @@ typedef struct {
     uint32_t global_system_interrupt_base;  // 全局系统中断基地址
 }__attribute__((packed)) io_apic_t;
 
+typedef struct {
+    acpi_sdt_header_t header;   // 表头
+    uint32_t reserved1;         // 保留字段
+    uint64_t reserved2;         // 保留字段
+    uint8_t* table;
+}__attribute__((packed)) srat_t;
+
+// 处理器本地APIC/SAPIC亲和性结构
+typedef struct {
+    uint8_t type;                   // 条目类型， 对于APIC/SAPIC亲和性条目，该值为0
+    uint8_t length;                 // 条目长度
+    uint8_t proximity_domain_low;   // 亲和性域ID的低位字节
+    uint8_t apic_id;                // APIC ID
+    uint32_t flags;                 // 标志位, 指示此APIC/SAPIC是否可用等
+    uint8_t local_sapic_eid;        // SAPIC EID (如果存在)
+    uint8_t proximity_domain_high[3];  // 亲和性域ID的高位字节
+    uint32_t clock_domain;          // 时钟域
+}__attribute__((packed)) srat_lapic_sapic_affinity;
+
+// 内存亲和性结构(Memory Affinity Structure)
+typedef struct {
+    uint8_t type;                   // 条目类型,对于内存亲和性条目，ACPI规定的值通常为1
+    uint8_t length;                 // 条目长度
+    uint32_t proximity_domain;      // 亲和性域ID
+    uint16_t reserved1;             // 保留字段，用于对齐
+    uint32_t base_addr_low;         // 内存区域的基础地址低32位
+    uint32_t base_addr_high;        // 内存区域的基础地址高32位
+    uint32_t length_low;            // 该内存区域的长度的低32位
+    uint32_t length_high;           // 该内存区域的长度的高32位
+    uint32_t reserved2;             // 保留字段，用于对齐
+    uint32_t flags;                 // 标志位
+    uint64_t reserved3;             // 保留字段
+}__attribute__((packed)) srat_mem_affinity;
 int* find_rsdp();
 
 void print_rsdp_info();
@@ -78,6 +111,10 @@ void print_rsdt_info();
 
 void print_apic_info();
 
+void print_sart_info();
+
+void print_srat_lapic_sapic_affinity_info(srat_lapic_sapic_affinity* p);
+void print_srat_mem_affinity_info(srat_mem_affinity* p);
 
 
 

@@ -9,6 +9,8 @@
 #define ACPI_SIG 0x20445352
 #define APIC_SIG 0x43495041
 
+extern srat_t* g_srat;
+
 rsdp_t* g_rsdp;
 rsdt_t* g_rsdt;
 madt_t* g_apic;
@@ -291,5 +293,83 @@ void print_apic_info() {
     printk("===== end: APIC INFO =====\n");
 
 
+}
+
+void print_sart_info() {
+    assert(NULL != g_srat);
+
+    char buf[0x10] = {0};
+
+    // 检查checksum
+    if (0 != compute_checksum(g_srat, g_srat->header.length)) {
+        panic("SRAT data error!\n");
+    }
+
+    printk("===== start: SRAT INFO =====\n");
+    printk("SRAT addr: 0x%08x\n", g_srat);
+    printk("SRAT length: %d\n", g_srat->header.length);
+    printk("SRAT entry addr: 0x%08x\n", &(g_srat->table));
+
+    memcpy(buf, g_srat->header.signature, 4);
+    printk("SRAT signature: %s\n", buf);
+
+    printk("SRAT revision: %d\n", g_srat->header.revision);
+
+    memset(buf, 0, 10);
+    memcpy(buf, g_srat->header.oem_id, 6);
+    printk("SRAT oem_id: %s\n", buf);
+
+    memset(buf, 0, 10);
+    memcpy(buf, g_srat->header.oem_table_id, 8);
+    printk("SRAT oem_table_id: %s\n", buf);
+
+    printk("SRAT oem_revision: 0x%08x\n", g_srat->header.oem_revision);
+    printk("SRAT creator_id: 0x%08x\n", g_srat->header.creator_id);
+    printk("SRAT creator_revision: 0x%08x\n", g_srat->header.creator_revision);
+
+    {
+        uint8_t* addr = &g_srat->table;
+
+        uint8_t* addr_end = (uint8_t*)g_srat + g_srat->header.length;
+        while (addr < addr_end) {
+            if (0 == *addr) {
+                srat_lapic_sapic_affinity* sapic =addr;
+
+                addr += sapic->length;
+            } else if (1 == *addr) {
+                srat_lapic_sapic_affinity* mem = addr;
+                print_srat_mem_affinity_info(mem);
+
+                addr += mem->length;
+            } else {
+                // 这里为什么这样写？因为此表中的每个value对应的结构的length在index=1的地方
+                addr += *(addr + 1);
+            }
+        }
+    }
+
+    printk("===== end: SRAT INFO =====\n");
+}
+
+void print_srat_lapic_sapic_affinity_info(srat_lapic_sapic_affinity* p) {
+    assert(NULL != p);
+
+    printk("lapic_sapic_affinity domain: %d %d %d %d\n",
+           p->proximity_domain_low, p->proximity_domain_high[0],
+           p->proximity_domain_high[1], p->proximity_domain_high[2]);
+
+    printk("apic_id: %d, flags: %d\n", p->apic_id, p->flags);
+
+    printk("local_sapic_eid: %d, clock_domain: %d\n", p->local_sapic_eid, p->clock_domain);
+}
+
+void print_srat_mem_affinity_info(srat_mem_affinity* p) {
+    assert(NULL != p);
+
+    printk("------------------------------------------\n");
+    printk("proximity_domain: %d, flags: %d\n", p->proximity_domain, p->flags);
+    printk("from : %x%08x, len: %x%08x\n", p->base_addr_high, p->base_addr_low, p->length_high, p->length_low);
+
+    printk("------------------------------------------\n");
 }
 

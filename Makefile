@@ -150,20 +150,22 @@ qemu: all
 	-hda ./build/hd.img
 
 numa: clean all
-	qemu-system-x86_64 -m 5G \
- 	-cpu Haswell -smp cpus=5 \
-	-numa node,nodeid=0,cpus=0-1,mem=1706 \
-    -numa node,nodeid=1,cpus=2-3,mem=1706 \
-    -numa node,nodeid=2,cpus=4,mem=1708 \
+	qemu-system-x86_64 -m 5.5G \
+ 	-cpu Haswell -smp sockets=2,cores=1,threads=2 \
+	-object memory-backend-ram,id=mem0,size=2.5G \
+	-object memory-backend-ram,id=mem1,size=3G \
+	-numa node,memdev=mem0,cpus=0-1 \
+	-numa node,memdev=mem1,cpus=2-3 \
     -hda ./build/hd.img
 
 numag: clean all
 	qemu-system-x86_64 -m 5G \
- 	-cpu Haswell -smp cpus=5 \
-	-numa node,nodeid=0,cpus=0-1,mem=1706 \
-    -numa node,nodeid=1,cpus=2-3,mem=1706 \
-    -numa node,nodeid=2,cpus=4,mem=1708 \
-    -hda ./build/hd.img \
+	-cpu Haswell -smp cores=1,threads=4 \
+	-object memory-backend-ram,id=mem0,size=2.5G \
+	-object memory-backend-ram,id=mem1,size=2.5G \
+	-numa node,memdev=mem0,cpus=0-1 \
+	-numa node,memdev=mem1,cpus=2-3 \
+	-hda ./build/hd.img \
     -s -S
 
 

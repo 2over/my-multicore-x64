@@ -59,7 +59,7 @@ void kernel64_main(void) {
 
     task_init();
 
-    print_check_memory_info();
+//    print_check_memory_info();
     cpu_broadcast();
 
     asm volatile("sti;");
