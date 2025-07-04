@@ -14,6 +14,10 @@ long startup_time;
 void ap_run_flow() {
     *(uint8_t*)0x7f33 = 0; // 解锁
 
+    // 给AP核写入idtr 支持中断
+    asm volatile ( "lidt idtr_data;");
+    int i = 10 / 0;
+
     printk("here\n");
 
     while (true) {

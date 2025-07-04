@@ -9,7 +9,7 @@ extern void rtc_handler_entry();
 
 static idt_item_t idt_table[255] = {0};
 
-static idtr_data_t idtr_data;
+idtr_data_t idtr_data;
 
 // 是在汇编中定义的
 extern int64 interrupt_handler_table[0x1f];
