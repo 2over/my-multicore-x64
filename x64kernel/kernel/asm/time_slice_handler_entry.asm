@@ -15,6 +15,8 @@ extern get_task_context
 extern resume_task64
 extern set_task_ready
 extern sched64
+extern get_esp0
+extern switch_task64
 
 ; rip
 ; cs
@@ -39,6 +41,7 @@ time_slice_handler_entry:
     swapgs
     call get_task_context
     mov rdi, rax
+
 
     pop rax                 ; 恢复rax
 
@@ -98,11 +101,14 @@ time_slice_handler_entry:
     swapgs
     mov [gs:8], rdi
     swapgs
+
+
 .resume_task64:
     swapgs
     mov rdi, [gs:8]
     swapgs
     call get_task_context
+
 
 ;    mov rax, [rax + 8 * 2]
     mov rbx, [rax + 8 * 3]
@@ -132,16 +138,28 @@ time_slice_handler_entry:
     call local_apic_clock_run
     call send_local_apic_eoi
 
-    iretq               ; 返回前两句push的代码闻之
+    iretq               ; 返回前两句push的代码位置
+
 .no_store_context:
     pop rdi
-    call local_apic_clock_run
-    call send_local_apic_eoi
+
+    call sched64
+    cmp rax, 0
+    je .no_ready_task
+
+    mov rdi, rax
+    call get_esp0
+
+    swapgs
+    mov [gs:8], rdi
+    mov [gs:32], rax
+    swapgs
+
+    call switch_task64
 
     iretq
 
 .no_ready_task:
-    call local_apic_clock_run
     call send_local_apic_eoi
     iretq
 
