@@ -1,4 +1,4 @@
-%include "/home/ziya/CLionProjects/my-multicore-x64/x64kernel/kernel/asm/include/common.cover"
+%include "x64kernel/kernel/asm/include//common.cover"
 
 [SECTION .data]
 msg_1: db "[time slice] processor id :%d, enter", 10, 13, 0
@@ -9,6 +9,8 @@ lock_state: db 0
 [BITS 64]
 
 extern printk
+extern send_local_apic_eoi
+extern local_apic_clock_run
 
 ; rip
 ; cs
@@ -22,9 +24,8 @@ time_slice_handler_entry:
     mov rdi, msg_1
     call printk
 
-.hlt:
-    hlt
-    jmp  .hlt
+    call local_apic_clock_run
+    call send_local_apic_eoi
 
 .ret:
     iretq
