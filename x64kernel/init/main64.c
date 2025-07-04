@@ -56,8 +56,10 @@ void kernel64_main(void) {
 
     task_init();
 
-    console_init();
+//    io_apic_run();
+
     cpu_broadcast();
+//    cpu_signal(1);
 
     asm volatile("sti;");
 
