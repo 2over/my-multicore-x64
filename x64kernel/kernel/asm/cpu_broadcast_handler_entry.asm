@@ -52,7 +52,6 @@ cpu_broadcast_handler_entry:
 .unlock:
     SPIN_UNLOCK byte [lock_state]
 
-    call send_local_apic_eoi
 
 .call:
     call switch_task64
