@@ -51,3 +51,19 @@ void ap_init() {
 void enable_local_apic() {
     asm volatile("btsl $8, %0" :: "m" (*(volatile long*)(g_local_apic_addr + 0xf0)));
 }
+
+void local_apic_clock_run() {
+    *(volatile int*)(g_local_apic_addr + 0x3e0) = 0x0b;
+    *(volatile int*)(g_local_apic_addr + 0x320) = 0xf1;
+    *(volatile int*)(g_local_apic_addr + 0x380) = 0xf000000;
+}
+
+void local_apic_clock_cyling_run() {
+    *(volatile int*)(g_local_apic_addr + 0x3e0) = 0x0b;
+    *(volatile int*)(g_local_apic_addr + 0x320) = 0x200f1;
+    *(volatile int*)(g_local_apic_addr + 0x380) = 0xf000000;
+}
+
+void clear_apic_clock() {
+    *(volatile int*)(g_local_apic_addr + 0x380) = 0;
+}

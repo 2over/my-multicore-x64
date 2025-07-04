@@ -15,4 +15,12 @@ void ap_init();
 
 void enable_local_apic();
 
+// 单次激发
+void local_apic_clock_run();
+
+// 周期性激发
+void local_apic_clock_cyling_run();
+
+void clear_apic_clock();
+
 #endif //MY_MULTICORE_X64_APIC_H

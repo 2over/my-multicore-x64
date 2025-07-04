@@ -44,7 +44,7 @@ ${BUILD}/kernel64/kernel.bin: ${BUILD}/kernel64/boot/head.o ${BUILD}/kernel64/in
 	${BUILD}/kernel64/kernel/exception.o ${BUILD}/kernel64/kernel/time.o ${BUILD}/kernel64/kernel/task.o ${BUILD}/kernel64/kernel/sched.o \
 	${BUILD}/kernel64/kernel/asm/sched.o ${BUILD}/kernel64/interrupt/clock_interrupt.o ${BUILD}/kernel64/kernel/asm/clock_handler.o \
 	${BUILD}/kernel64/kernel/acpi.o ${BUILD}/kernel64/mm/page.o ${BUILD}/kernel64/kernel/apic.o ${BUILD}/kernel64/kernel/gdt.o \
-	${BUILD}/kernel64/kernel/cpu.o ${BUILD}/kernel64/kernel/asm/cpu_broadcast_handler_entry.o
+	${BUILD}/kernel64/kernel/cpu.o ${BUILD}/kernel64/kernel/asm/cpu_broadcast_handler_entry.o ${BUILD}/kernel64/kernel/asm/time_slice_handler_entry.o
 	$(shell mkdir -p ${BUILD}/kernel64)
 	ld -b elf64-x86-64 -o $@ $^ -Ttext 0x100000
 

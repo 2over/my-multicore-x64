@@ -7,6 +7,7 @@ extern void keymap_handler_entry();
 extern void interrupt_handler_0();
 extern void rtc_handler_entry();
 extern void cpu_broadcast_handler_entry();
+extern void time_slice_handler_entry();
 
 static idt_item_t idt_table[255] = {0};
 
@@ -67,6 +68,7 @@ void idt_init() {
     install_idt_item(0x21, (int64)&keymap_handler_entry, 0x18, 0, 0);
     install_idt_item(0x28, (int64)&rtc_handler_entry, 0x18, 0, 0);
     install_idt_item(0xf0, (int64)&cpu_broadcast_handler_entry, 0x18, 0, 0);
+    install_idt_item(0xf1, (int64)&cpu_broadcast_handler_entry, 0x18, 0, 0);
 
     idtr_data.limit = sizeof(idt_table) - 1;
     idtr_data.base = &idt_table;
