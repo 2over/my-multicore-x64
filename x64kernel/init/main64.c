@@ -28,13 +28,12 @@ void ap_run_flow() {
                  "shr $32, %%rdx;"
                  "wrmsr;"::"a"(kpcr), "d"(kpcr));
 
-    uint64_t pid = 0;
+    // 让ap核进入自己的栈运行
     asm volatile("swapgs;"
-                 "mov %%gs:0, %0;"
-                 "swapgs;" : "=r"(pid) :
-            : "rax");
+                 "mov %gs:16, %rsp;"
+                 "swapgs;");
 
-    printk("---------------%x\n", pid);
+    asm volatile("sti;");
 
     printk("here\n");
 
