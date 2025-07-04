@@ -22,6 +22,19 @@ void ap_run_flow() {
     // 给AP核写入idtr 支持中断
     asm volatile ( "lidt idtr_data;");
 
+    // 为AP创建KPCR
+    kpcr_t* kpcr = kpcr_create(*(uint8_t*)0x7f2c);
+    asm volatile("mov $0xc0000102, %%ecx;"
+                 "shr $32, %%rdx;"
+                 "wrmsr;"::"a"(kpcr), "d"(kpcr));
+
+    uint64_t pid = 0;
+    asm volatile("swapgs;"
+                 "mov %%gs:0, %0;"
+                 "swapgs;" : "=r"(pid) :
+            : "rax");
+
+    printk("---------------%x\n", pid);
 
     printk("here\n");
 
@@ -39,16 +52,8 @@ void kernel64_main(void) {
     gdt_init();
     time_init();
     acpi_init();
-
     bsp_init();
 
-    uint64_t esp0 = 0;
-    asm volatile("swapgs;"
-                 "mov %%gs:16, %0;"
-                 "swapgs;" : "=r"(esp0) :
-                 : "rax");
-
-    printk("---------------%x\n", esp0);
     task_init();
 
 //    io_apic_run();
