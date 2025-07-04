@@ -1,0 +1,23 @@
+%ifndef COVER_OS_COMMON_INC
+%define COVER_OS_COMMON_INC
+
+; SPIN_LOCK al, byte [local_state]
+%macro SPIN_LOCK 2
+    .spinlock
+        mov %1, 1           ; 将要交换的值设置为1,表示上锁炸ungtai
+        jmp .spin
+    .pause:
+        pause
+    .spin:                  ; 自旋等待的标签
+        xchg %1, %2         ; 尝试上锁
+        test %1, %1         ; 检查原来的锁状态
+        jnz .pause          ; 如果原来的锁已经被上锁(即lock的值为1),则进行自旋等待
+
+%endmacro
+
+; SPIN_UNLOCK byte [lock_state]
+%macro SPIN_UNLOCK 1
+    mov %1, 0
+%endmacro
+
+%endif

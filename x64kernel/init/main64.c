@@ -59,12 +59,12 @@ void kernel64_main(void) {
 //    io_apic_run();
     ap_init();
 
-//    cpu_broadcast();
-    cpu_signal(1);
+    cpu_broadcast();
+//    cpu_signal(1);
 
 
     while (true) {
-//        printk("kernel64_main\n");
+        printk("kernel64_main\n");
         asm volatile("sti;");
         asm volatile("xchg %bx, %bx; hlt;");
     }
