@@ -15,3 +15,6 @@
 # 逻辑地址、线性地址、物理地址之间的转换关系
 ![image](https://github.com/user-attachments/assets/13d28f65-7e36-442b-a4cb-fd97ae65d418)
 
+# 物理内存管理
+![image](https://github.com/user-attachments/assets/8a11fb06-aa72-450f-b481-0c222c1655e3)
+
