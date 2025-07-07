@@ -18,3 +18,9 @@
 # 物理内存管理
 ![image](https://github.com/user-attachments/assets/8a11fb06-aa72-450f-b481-0c222c1655e3)
 
+# 10-10-12分页
+![po_diagram](https://github.com/user-attachments/assets/74ea88d9-aeb9-4491-a4da-d6183d6c2a1a)
+
+# 2-9-9-12分页
+![po_diagram (1)](https://github.com/user-attachments/assets/0c4b0ad5-bf60-497d-9e74-835aeca7d893)
+
