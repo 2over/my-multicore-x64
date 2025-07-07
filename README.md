@@ -11,3 +11,7 @@
 
 # 页式内存管理
 ![image](https://github.com/user-attachments/assets/c76f355c-cadf-484f-95e0-73b53fb2e4f9)
+
+# 逻辑地址、线性地址、物理地址之间的转换关系
+![image](https://github.com/user-attachments/assets/13d28f65-7e36-442b-a4cb-fd97ae65d418)
+
