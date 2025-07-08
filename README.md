@@ -3,6 +3,10 @@
 # 整体架构图
 ![image](https://github.com/user-attachments/assets/767be507-bfa1-41de-bc9e-a4ba05e6cf52)
 
+# x64内存结构
+![image](https://github.com/user-attachments/assets/90730d56-dc5f-40fd-86ff-961656524937)
+
+
 # 分页机制
 ![image](https://github.com/user-attachments/assets/d50ff785-13ae-473f-9997-026ee8ca37f1)
 
