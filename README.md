@@ -31,3 +31,7 @@
 # 4-level-paging
 ![image](https://github.com/user-attachments/assets/9c11e5fe-0ba2-41db-a316-c57f6a5b2ec3)
 
+# CPU响应中断的流程
+![image](https://github.com/user-attachments/assets/515ca76d-ba1f-410f-a38f-225c8682c5b5)
+
+
