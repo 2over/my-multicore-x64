@@ -34,4 +34,6 @@
 # CPU响应中断的流程
 ![image](https://github.com/user-attachments/assets/515ca76d-ba1f-410f-a38f-225c8682c5b5)
 
+![image](https://github.com/user-attachments/assets/6a870168-f4cb-4123-99d5-f1dc5f5530a1)
+
 
