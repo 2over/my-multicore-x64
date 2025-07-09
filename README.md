@@ -1,4 +1,19 @@
-# 手写x64多核
+![image](https://github.com/user-attachments/assets/0817ebe1-250f-4ac2-9bef-621781fd478b)# 手写x64多核
+
+# shell功能展示
+![image](https://github.com/user-attachments/assets/8473b678-e19f-4c0e-9696-24ab40766e50)
+
+## clear: clear the screen. example: clear
+## tasks : view all tasks. example: tasks
+## task count : create tasks. example: task 2
+## cpus: view all CPU info. example: cpus
+## run: all cpus grab the task. example: run
+## cpu index: specify a CPU. example: cpu 1
+## r [gdtr|idtr]: read gdtr | idtr register. example: r gdtr
+## gdt: view all segments of the CPU. example: gdt
+## idt: view all interrupt handling table. example: idt
+## mm: view memory info. example: mm
+## mmu addr: simulate the working principle of MMU. example: mmu 0
 
 # 整体架构图
 ![image](https://github.com/user-attachments/assets/767be507-bfa1-41de-bc9e-a4ba05e6cf52)
